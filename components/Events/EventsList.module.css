@@ -1,0 +1,16 @@
+.events {
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  color: white;
+  font-weight: 400;
+  font-size: 2.5rem;
+}
+
+@media screen and (min-width: 1024px) {
+  .events {
+    width: 70vw;
+  }
+}

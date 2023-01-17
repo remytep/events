@@ -49,7 +49,7 @@ function Register() {
         const docSnap = await getDoc(docRef);
         //if handle is not available, we set an error message
         if (docSnap.exists()) {
-            setError("handle", { type: 'custom', message: 'Handle is already taken.' })
+            return setError("handle", { type: 'custom', message: 'Handle is already taken.' })
         }
 
         registration(userInfos.email, userInfos.password);
@@ -63,7 +63,6 @@ function Register() {
 
     useEffect(() => {
         if (user) {
-            localStorage.setItem('user-uid', user.uid);
             router.push("/");
         }
     })

@@ -4,7 +4,7 @@ import { auth } from "../config/firebase";
 
 export default function Home() {
   const [currentUser] = useAuthState(auth);
-  console.log(currentUser)
+
   if (currentUser) {
     return (
       <div>

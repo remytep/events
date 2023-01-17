@@ -9,6 +9,7 @@ import { useForm } from "react-hook-form";
 import { collection, doc, addDoc, getDoc, setDoc } from "firebase/firestore";
 import { useRouter } from 'next/router'
 import { AuthContext } from "../context/AuthContext";
+import SignInWithGoogleButton from "../components/auth/SignInWithGoogleButton";
 
 
 function Login() {
@@ -49,7 +50,6 @@ function Login() {
 
     useEffect(() => {
         if (user) {
-            localStorage.setItem('user-uid', user["uid"]);
             router.push("/");
         }
     })
@@ -88,6 +88,7 @@ function Login() {
             <button type="submit">
                 Login
             </button>
+            <SignInWithGoogleButton />
         </form>
     )
 }

@@ -11,6 +11,12 @@ export default function handler(
     const docRef = doc(db, "users", req.body.handle);
 
     async function createUser() {
+        const docSnap = await getDoc(docRef);
+        //if handle is not available, we set an error message
+        if (docSnap.exists()) {
+            return res.status(200).send("already taken");
+        }
+
         try {
             await setDoc(docRef, {
                 handle: req.body.handle,

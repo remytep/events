@@ -19,7 +19,7 @@ function AuthProvider({ children }: PropsWithChildren<{}>) {
 
     const [
         createUserWithEmailAndPassword,
-        user,
+        registerUser,
         loading,
         registerError,
     ] = useCreateUserWithEmailAndPassword(auth);

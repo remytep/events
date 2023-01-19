@@ -29,7 +29,6 @@ export default function App({ Component, pageProps }: AppProps) {
       </Head>
       <AuthProvider>
         <Layout>
-          <Navbar />
           <Component {...pageProps} />
         </Layout>
       </AuthProvider>

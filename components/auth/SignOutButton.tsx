@@ -17,10 +17,7 @@ const SignOutButton = () => {
     return (
         <button
             onClick={async () => {
-                const success = await signOut();
-                if (success) {
-                    router.push("/login");
-                }
+                await signOut();
             }}
         >
             Sign out

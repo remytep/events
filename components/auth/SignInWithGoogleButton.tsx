@@ -25,7 +25,6 @@ const SignInWithGoogleButton = () => {
             email: user.user.email,
         })
             .then((res) => {
-                console.log(res);
                 router.push("/");
             })
     }

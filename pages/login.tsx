@@ -13,14 +13,6 @@ import SignInWithGoogleButton from "../components/auth/SignInWithGoogleButton";
 
 
 function Login() {
-    // async function getUsers() {
-    //     const querySnapshot = await getDocs(collection(db, "users"));
-    //     querySnapshot.forEach((doc) => {
-    //         console.log(`${doc.id} => ${JSON.stringify(doc.data())}`);
-    //     });
-    // }
-    // getUsers()
-    const router = useRouter();
     const [userInfos, setUserInfos] = useState({
         email: "",
         password: "",
@@ -31,7 +23,7 @@ function Login() {
         password: yup.string().required('Password is required').min(6, "Password must be at least 6 characters"),
     }).required();
 
-    const { user, login, loginError } = useContext(AuthContext);
+    const { login, loginError } = useContext(AuthContext);
 
     const { register, handleSubmit, setValue, setError, formState: { errors } } = useForm({
         resolver: yupResolver(schema)
@@ -47,14 +39,6 @@ function Login() {
             setError("password", { type: 'custom', message: "Wrong credentials." })
         }
     }
-
-    useEffect(() => {
-        if (user) {
-            router.push("/");
-        }
-    })
-
-    // console.log(user)
 
     return (
         <form onSubmit={handleSubmit(signUp)}>
@@ -92,4 +76,11 @@ function Login() {
         </form>
     )
 }
+
+export async function getServerSideProps() {
+    return {
+        props: { guest: true }
+    };
+}
+
 export default Login;

@@ -19,8 +19,7 @@ export default function handler(
 
         try {
             await setDoc(docRef, {
-                handle: req.body.handle,
-                email: req.body.email,
+                description: ""
             });
             return res.status(200).send("created");
         }

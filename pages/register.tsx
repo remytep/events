@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useAuthState, useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
+import { useAuthState, useCreateUserWithEmailAndPassword, useUpdateProfile } from 'react-firebase-hooks/auth';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { auth, db } from "../config/firebase";
 import axios from "axios";
@@ -24,7 +24,9 @@ function Register() {
         password: "",
         email: "",
     });
-    const { user, registration, registerError } = useContext(AuthContext);
+    const [user] = useAuthState(auth);
+    const [updateProfile, updating, error] = useUpdateProfile(auth);
+    const { registration, registerError } = useContext(AuthContext);
 
     const schema = yup.object({
         handle: yup.string().required("Handle is required."),
@@ -37,11 +39,6 @@ function Register() {
     const { register, handleSubmit, setValue, setError, formState: { errors } } = useForm({
         resolver: yupResolver(schema)
     });
-
-    if (user) {
-        axios.post("/api/register/", userInfos)
-            .then((res) => console.log(res.data))
-    }
 
     const createUser = async () => {
         const docRef = doc(db, "users", userInfos.handle);
@@ -62,11 +59,13 @@ function Register() {
     }
 
     useEffect(() => {
-        if (user) {
-            router.push("/");
+        if (user && !Object(user).displayName) {
+            updateProfile({ displayName: userInfos.handle })
+            axios.post("/api/register/", userInfos)
+                .then((res) => console.log(res.data))
         }
     })
-    console.log(user)
+
     return (
         <form onSubmit={handleSubmit(createUser)}>
             <div>
@@ -132,4 +131,10 @@ function Register() {
         </form>
     )
 }
+export async function getServerSideProps() {
+    return {
+        props: { guest: true }
+    };
+}
+
 export default Register;

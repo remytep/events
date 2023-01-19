@@ -8,7 +8,7 @@ import { useContext } from "react";
 import { useRouter } from "next/router";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../config/firebase";
-import Navbar from "../components/Navbar";
+
 export default function App({ Component, pageProps }: AppProps) {
   const [user, loading] = useAuthState(auth);
   const router = useRouter();

@@ -17,7 +17,10 @@ export default function Home() {
   });
   const [distance, setDistance] = useState(500);
   const [tags, setTags] = useState([]);
-  const [location, setLocation] = useState({});
+  const [location, setLocation] = useState({
+    lat: null,
+    lng: null,
+  });
   const [apiUrl, setApiUrl] = useState("");
   const [results, setResults] = useState(null);
   const [rows, setRows] = useState(4);

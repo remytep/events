@@ -1,0 +1,70 @@
+.eventCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  position: relative;
+}
+
+.title {
+  font-size: 1.3rem;
+}
+
+.imageContainer {
+  position: relative;
+}
+
+.images {
+  width: 100%;
+}
+
+.moreIcon {
+  cursor: pointer;
+  position: absolute;
+  height: 30px;
+  width: 30px;
+  bottom: 2px;
+  right: 1px;
+  z-index: 10;
+  mix-blend-mode: difference;
+}
+
+.eventInfos {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.dateRange {
+  color: lightgray;
+}
+
+.locationName {
+  display: flex;
+  align-items: flex-end;
+}
+
+@media screen and (min-width: 700px) {
+  .moreIcon {
+    cursor: pointer;
+    position: absolute;
+    height: 36px;
+    width: 36px;
+    bottom: 2px;
+    right: 1px;
+    z-index: 10;
+    mix-blend-mode: difference;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .moreIcon {
+    cursor: pointer;
+    position: absolute;
+    height: 40px;
+    width: 40px;
+    bottom: 2px;
+    right: 1px;
+    z-index: 10;
+    mix-blend-mode: difference;
+  }
+}

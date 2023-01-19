@@ -4,7 +4,9 @@
   align-items: center;
   color: white;
   padding: 1rem;
+  height: 10vh;
 }
+
 .navbarTitle {
   font-size: 1.4rem;
 }
@@ -61,7 +63,7 @@
     justify-content: space-between;
     align-items: center;
     color: white;
-    padding: 1rem;
+    padding: 2rem 3rem;
   }
   .navbarTitle {
     font-size: 1.4rem;

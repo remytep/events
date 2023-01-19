@@ -1,0 +1,32 @@
+.filters {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+}
+
+.filtersButton {
+  font-size: 1.2rem;
+  color: white;
+  justify-content: flex-end;
+  display: flex;
+  gap: 0.2rem;
+}
+
+.addFilters {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.addFilters:hover {
+  cursor: pointer;
+}
+@media screen and (min-width: 1024px) {
+  .filters {
+    height: 100%;
+    width: 30%;
+  }
+
+  .filtersButton {
+    font-size: 1rem;
+  }
+}

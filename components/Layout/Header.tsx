@@ -1,9 +1,9 @@
 import Head from "next/head";
 import React, { Fragment, useState } from "react";
 import Link from "next/link";
-import styles from "./Header.module.css";
 import { Poppins } from "@next/font/google";
 import { Transition, Dialog } from "@headlessui/react";
+import styles from "../../styles/Header.module.css";
 
 const poppins = Poppins({ weight: "400", subsets: ["latin"] });
 

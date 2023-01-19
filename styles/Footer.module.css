@@ -1,0 +1,12 @@
+.footer {
+  height: 5vh;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.footerCopyright {
+  color: white;
+  padding: 0.5rem 1rem;
+  font-size: 0.7rem;
+}

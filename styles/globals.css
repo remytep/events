@@ -53,6 +53,7 @@ a {
 .ease-in-out {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
+
 .translate-x-0 {
   transform: translateX(0px);
 }
@@ -60,18 +61,23 @@ a {
 .translate-x-full {
   transform: translateX(100%);
 }
+
 .duration-300 {
   transition-duration: 300ms;
 }
+
 .opacity-0 {
   opacity: 0;
 }
+
 .opacity-100 {
   opacity: 1;
 }
+
 .fixed {
   position: fixed;
 }
+
 .absolute {
   position: absolute;
 }
@@ -90,9 +96,25 @@ a {
 .bg-opacity-25 {
   opacity: 0.25;
 }
+
+.text-light {
+  color: rgb(255 255 255);
+}
+
 .flex {
   display: flex;
 }
+
+.flex-col {
+  flex-direction: column;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 50px;
+}
+
 
 .z-40 {
   z-index: 40;
@@ -101,4 +123,12 @@ a {
 .map-pin {
   height: 24px;
   width: 24px;
+}
+
+.nextui-input-block-label {
+  color: white;
+}
+
+.nextui-input-helper-text {
+  color: rgb(236, 87, 87)
 }

@@ -1,24 +1,18 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useAuthState, useCreateUserWithEmailAndPassword, useUpdateProfile } from 'react-firebase-hooks/auth';
+import { useAuthState, useUpdateProfile } from 'react-firebase-hooks/auth';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { auth, db } from "../config/firebase";
+import { auth, db, storage } from "../config/firebase";
 import axios from "axios";
-import SignOutButton from "../components/auth/SignOutButton";
 import * as yup from 'yup';
 import { useForm } from "react-hook-form";
-import { collection, doc, addDoc, getDoc, setDoc } from "firebase/firestore";
-import { useRouter } from 'next/router'
+import { doc } from "firebase/firestore";
+import { useDocument } from 'react-firebase-hooks/firestore';
+import { useDownloadURL } from 'react-firebase-hooks/storage';
 import { AuthContext } from "../context/AuthContext";
+import { ref } from "@firebase/storage";
 
 function Register() {
-    // async function getUsers() {
-    //     const querySnapshot = await getDocs(collection(db, "users"));
-    //     querySnapshot.forEach((doc) => {
-    //         console.log(`${doc.id} => ${JSON.stringify(doc.data())}`);
-    //     });
-    // }
-    // getUsers()
-    const router = useRouter()
+    const [downloadURL, downloadLoading, downloadError] = useDownloadURL(ref(storage, "users/default.jpg"));
     const [userInfos, setUserInfos] = useState({
         handle: "",
         password: "",
@@ -29,42 +23,44 @@ function Register() {
     const { registration, registerError } = useContext(AuthContext);
 
     const schema = yup.object({
-        handle: yup.string().required("Handle is required."),
+        handle: yup.string().required("Handle is required.").min(3, "Handle must be at least 3 characters").matches(/^[a-zA-Z0-9_-]+$/, "Handle is not valid."),
         email: yup.string().required("Email is required.").email("Email is not valid."),
         password: yup.string().required('Password is required').min(6, "Password must be at least 6 characters"),
         confirmPassword: yup.string().oneOf([yup.ref("password"), null], "Passwords don't match"),
     }).required();
 
-
     const { register, handleSubmit, setValue, setError, formState: { errors } } = useForm({
         resolver: yupResolver(schema)
     });
 
-    const createUser = async () => {
-        const docRef = doc(db, "users", userInfos.handle);
+    //check if user handle is already registered
+    const [value, loading, docError] = useDocument(
+        doc(db, 'users', Object(user).uid || "%"),
+        {
+            snapshotListenOptions: { includeMetadataChanges: true },
+        }
+    );
 
-        const docSnap = await getDoc(docRef);
+    const createUser = () => {
         //if handle is not available, we set an error message
-        if (docSnap.exists()) {
+        if (value?.data()) {
             return setError("handle", { type: 'custom', message: 'Handle is already taken.' })
         }
 
         registration(userInfos.email, userInfos.password);
-
-        //if we get an error, then email is already taken
-        if (Object.keys(Object(registerError)).length > 0) {
-            setError("email", { type: 'custom', message: 'Email is already taken.' })
-        }
-
     }
 
     useEffect(() => {
         if (user && !Object(user).displayName) {
-            updateProfile({ displayName: userInfos.handle })
-            axios.post("/api/register/", userInfos)
+            updateProfile({ displayName: userInfos.handle, photoURL: downloadURL })
+            axios.post("/api/user/", userInfos)
                 .then((res) => console.log(res.data))
         }
-    })
+        //if we get an error, then email is already taken
+        if (Object.keys(Object(registerError)).length > 0) {
+            setError("email", { type: 'custom', message: 'Email is already taken.' })
+        }
+    }, [registerError, user])
 
     return (
         <form onSubmit={handleSubmit(createUser)}>

@@ -10,6 +10,9 @@ import { useDocument } from 'react-firebase-hooks/firestore';
 import { useDownloadURL } from 'react-firebase-hooks/storage';
 import { AuthContext } from "../context/AuthContext";
 import { ref } from "@firebase/storage";
+import { Input, Button, Loading } from "@nextui-org/react";
+import styles from "../styles/Auth.module.css"
+import SignInWithGoogleButton from "../components/auth/SignInWithGoogleButton";
 
 function Register() {
     const [downloadURL, downloadLoading, downloadError] = useDownloadURL(ref(storage, "users/default.jpg"));
@@ -19,13 +22,14 @@ function Register() {
         email: "",
     });
     const [user] = useAuthState(auth);
-    const [updateProfile, updating, error] = useUpdateProfile(auth);
     const { registration, registerError } = useContext(AuthContext);
+    const [updateProfile, updating, updateError] = useUpdateProfile(auth);
+    const [loading, setLoading] = useState(false);
 
     const schema = yup.object({
-        handle: yup.string().required("Handle is required.").min(3, "Handle must be at least 3 characters").matches(/^[a-zA-Z0-9_-]+$/, "Handle is not valid."),
+        handle: yup.string().required("Handle is required.").min(3, "Handle must be at least 3 characters.").matches(/^[a-zA-Z0-9_-]+$/, "Handle is not valid."),
         email: yup.string().required("Email is required.").email("Email is not valid."),
-        password: yup.string().required('Password is required').min(6, "Password must be at least 6 characters"),
+        password: yup.string().required('Password is required').min(6, "Password must be at least 6 characters."),
         confirmPassword: yup.string().oneOf([yup.ref("password"), null], "Passwords don't match"),
     }).required();
 
@@ -34,8 +38,8 @@ function Register() {
     });
 
     //check if user handle is already registered
-    const [value, loading, docError] = useDocument(
-        doc(db, 'users', Object(user).uid || "%"),
+    const [value, docLoading, docError] = useDocument(
+        doc(db, 'users', userInfos.handle || "%"),
         {
             snapshotListenOptions: { includeMetadataChanges: true },
         }
@@ -43,7 +47,9 @@ function Register() {
 
     const createUser = () => {
         //if handle is not available, we set an error message
+        setLoading(true);
         if (value?.data()) {
+            setLoading(false);
             return setError("handle", { type: 'custom', message: 'Handle is already taken.' })
         }
 
@@ -51,6 +57,7 @@ function Register() {
     }
 
     useEffect(() => {
+        //if the user is created, we can store his information
         if (user && !Object(user).displayName) {
             updateProfile({ displayName: userInfos.handle, photoURL: downloadURL })
             axios.post("/api/user/", userInfos)
@@ -58,72 +65,77 @@ function Register() {
         }
         //if we get an error, then email is already taken
         if (Object.keys(Object(registerError)).length > 0) {
+            setLoading(false);
             setError("email", { type: 'custom', message: 'Email is already taken.' })
         }
     }, [registerError, user])
 
     return (
-        <form onSubmit={handleSubmit(createUser)}>
+        <form className={styles.form} onSubmit={handleSubmit(createUser)}>
             <div>
-                <input
-                    type="text"
+                <Input
                     {...register('handle')}
+                    label="Handle"
                     placeholder="Handle"
+                    helperText={Object(errors.handle).message?.toString()}
                     onChange={(e) => {
                         setUserInfos({ ...userInfos, handle: e.target.value });
                     }}
+                    fullWidth
                 />
-                {errors.handle && (
-                    <span>{errors.handle.message?.toString()}</span>
-                )}
             </div>
 
             <div>
-                <input
-                    type="text"
+                <Input
                     {...register('email')}
+                    label="Email"
                     placeholder="Email"
+                    helperText={Object(errors.email).message?.toString()}
                     onChange={(e) => {
                         setUserInfos({ ...userInfos, email: e.target.value });
                     }}
+                    fullWidth
                 />
-                {errors.email && (
-                    <span>{errors.email.message?.toString()}</span>
-                )}
-                {/* {error && (
-                    <span>Email is already taken.</span>
-                )} */}
             </div>
             <div>
-                <input
-                    type="password"
+                <Input.Password
                     {...register('password')}
+                    label="Password"
                     placeholder="Password"
+                    helperText={Object(errors.password).message?.toString()}
                     onChange={(e) => {
                         setUserInfos({ ...userInfos, password: e.target.value });
                     }}
+                    fullWidth
                 />
-                {errors.password && (
-                    <span>{errors.password.message?.toString()}</span>
-                )}
             </div>
 
             <div>
-                <input
-                    type="password"
+                <Input.Password
                     {...register('confirmPassword')}
+                    label="Confirm Password"
                     placeholder="Confirm password"
+                    helperText={Object(errors.confirmPassword).message?.toString()}
+                    fullWidth
                 />
-                {errors.confirmPassword && (
-                    <span>{errors.confirmPassword.message?.toString()}</span>
-                )}
             </div>
 
+            <div style={{ marginTop: "50px" }} className="flex flex-col">
+                <Button
+                    className={styles["nextui-button"]}
+                    disabled={loading ? true : false}
+                    type="submit"
+                >
+                    {loading ?
+                        <Loading color="currentColor" size="sm" />
+                        :
+                        "Register"
+                    }
+                </Button>
+                <span style={{ margin: "5px 0" }} className="text-center text-light">- or -</span>
+                <SignInWithGoogleButton />
+            </div>
 
-
-            <button type="submit">
-                Register
-            </button>
         </form>
     )
 }

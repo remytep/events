@@ -97,6 +97,11 @@ a {
   opacity: 0.25;
 }
 
+
+.text-center {
+  text-align: center;
+}
+
 .text-light {
   color: rgb(255 255 255);
 }
@@ -130,5 +135,6 @@ a {
 }
 
 .nextui-input-helper-text {
-  color: rgb(236, 87, 87)
+  color: rgb(236, 87, 87);
+  font-size: 12px;
 }

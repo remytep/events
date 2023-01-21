@@ -23,7 +23,8 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "context/AuthContext.ts"
+    "context/AuthContext.ts",
+    "public/google.ts"
   ],
   "exclude": [
     "node_modules"

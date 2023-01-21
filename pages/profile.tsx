@@ -27,10 +27,12 @@ function Profile() {
         email: "",
         presentation: ""
     });
+
     const schema = yup.object({
         handle: yup.string().required("Handle is required.").min(3, "Handle must be at least 3 characters."),
         email: yup.string().required("Email is required.").email("Email is not valid."),
     }).required();
+
     const [docValue, valueLoading, docError] = useDocument(
         doc(db, 'users', Object(userInfos).handle || "%"),
         {
@@ -59,10 +61,6 @@ function Profile() {
             };
             setUserInfos(obj);
             setDefaultValues(obj);
-        }
-
-        if (emailError && !emailUpdating) {
-
         }
 
         if (selectedFile) {
@@ -95,7 +93,6 @@ function Profile() {
         }
         else {
             return setError("email", { type: 'custom', message: 'Email is already taken.' })
-
         }
     }
 
@@ -107,7 +104,7 @@ function Profile() {
                 {snapshot && <span>Snapshot: {JSON.stringify(snapshot)}</span>}
                 {selectedFile && <span>Selected file: {selectedFile.name}</span>} */}
                 <form onSubmit={handleSubmit(update)}>
-
+                    <span className="text-light text-center">{user.displayName}'s Profile</span>
                     <label htmlFor="upload">
                         <Image
                             showSkeleton

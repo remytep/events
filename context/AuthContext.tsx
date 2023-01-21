@@ -20,7 +20,6 @@ export const AuthContext = createContext(initialState);
 
 function AuthProvider({ children }: PropsWithChildren<{}>) {
 
-
     const [
         createUserWithEmailAndPassword,
         registerUser,
@@ -40,7 +39,7 @@ function AuthProvider({ children }: PropsWithChildren<{}>) {
     ] = useSignInWithEmailAndPassword(auth);
 
     const login = (email: string, password: string) => {
-        signInWithEmailAndPassword(email, password);
+        return signInWithEmailAndPassword(email, password);
     }
 
     const reload = () => {

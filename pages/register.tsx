@@ -1,133 +1,141 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useAuthState, useCreateUserWithEmailAndPassword, useUpdateProfile } from 'react-firebase-hooks/auth';
+import { useAuthState, useUpdateProfile } from 'react-firebase-hooks/auth';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { auth, db } from "../config/firebase";
+import { auth, db, storage } from "../config/firebase";
 import axios from "axios";
-import SignOutButton from "../components/auth/SignOutButton";
 import * as yup from 'yup';
 import { useForm } from "react-hook-form";
-import { collection, doc, addDoc, getDoc, setDoc } from "firebase/firestore";
-import { useRouter } from 'next/router'
+import { doc } from "firebase/firestore";
+import { useDocument } from 'react-firebase-hooks/firestore';
+import { useDownloadURL } from 'react-firebase-hooks/storage';
 import { AuthContext } from "../context/AuthContext";
+import { ref } from "@firebase/storage";
+import { Input, Button, Loading } from "@nextui-org/react";
+import styles from "../styles/Auth.module.css"
+import SignInWithGoogleButton from "../components/auth/SignInWithGoogleButton";
 
 function Register() {
-    // async function getUsers() {
-    //     const querySnapshot = await getDocs(collection(db, "users"));
-    //     querySnapshot.forEach((doc) => {
-    //         console.log(`${doc.id} => ${JSON.stringify(doc.data())}`);
-    //     });
-    // }
-    // getUsers()
-    const router = useRouter()
+    const [downloadURL, downloadLoading, downloadError] = useDownloadURL(ref(storage, "users/default.jpg"));
     const [userInfos, setUserInfos] = useState({
         handle: "",
         password: "",
         email: "",
     });
     const [user] = useAuthState(auth);
-    const [updateProfile, updating, error] = useUpdateProfile(auth);
     const { registration, registerError } = useContext(AuthContext);
+    const [updateProfile, updating, updateError] = useUpdateProfile(auth);
+    const [loading, setLoading] = useState(false);
 
     const schema = yup.object({
-        handle: yup.string().required("Handle is required."),
+        handle: yup.string().required("Handle is required.").min(3, "Handle must be at least 3 characters.").matches(/^[a-zA-Z0-9_-]+$/, "Handle is not valid."),
         email: yup.string().required("Email is required.").email("Email is not valid."),
-        password: yup.string().required('Password is required').min(6, "Password must be at least 6 characters"),
+        password: yup.string().required('Password is required').min(6, "Password must be at least 6 characters."),
         confirmPassword: yup.string().oneOf([yup.ref("password"), null], "Passwords don't match"),
     }).required();
-
 
     const { register, handleSubmit, setValue, setError, formState: { errors } } = useForm({
         resolver: yupResolver(schema)
     });
 
-    const createUser = async () => {
-        const docRef = doc(db, "users", userInfos.handle);
+    //check if user handle is already registered
+    const [value, docLoading, docError] = useDocument(
+        doc(db, 'users', userInfos.handle || "%"),
+        {
+            snapshotListenOptions: { includeMetadataChanges: true },
+        }
+    );
 
-        const docSnap = await getDoc(docRef);
+    const createUser = () => {
         //if handle is not available, we set an error message
-        if (docSnap.exists()) {
+        setLoading(true);
+        if (value?.data()) {
+            setLoading(false);
             return setError("handle", { type: 'custom', message: 'Handle is already taken.' })
         }
 
         registration(userInfos.email, userInfos.password);
-
-        //if we get an error, then email is already taken
-        if (Object.keys(Object(registerError)).length > 0) {
-            setError("email", { type: 'custom', message: 'Email is already taken.' })
-        }
-
     }
 
     useEffect(() => {
+        //if the user is created, we can store his information
         if (user && !Object(user).displayName) {
-            updateProfile({ displayName: userInfos.handle })
-            axios.post("/api/register/", userInfos)
+            updateProfile({ displayName: userInfos.handle, photoURL: downloadURL })
+            axios.post("/api/user/", Object.assign(userInfos, { photoURL: downloadURL }))
                 .then((res) => console.log(res.data))
         }
-    })
+        //if we get an error, then email is already taken
+        if (Object.keys(Object(registerError)).length > 0) {
+            setLoading(false);
+            setError("email", { type: 'custom', message: 'Email is already taken.' })
+        }
+    }, [registerError, user])
 
     return (
-        <form onSubmit={handleSubmit(createUser)}>
+        <form className={styles.form} onSubmit={handleSubmit(createUser)}>
             <div>
-                <input
-                    type="text"
+                <Input
                     {...register('handle')}
+                    label="Handle"
                     placeholder="Handle"
+                    helperText={Object(errors.handle).message?.toString()}
                     onChange={(e) => {
                         setUserInfos({ ...userInfos, handle: e.target.value });
                     }}
+                    fullWidth
                 />
-                {errors.handle && (
-                    <span>{errors.handle.message?.toString()}</span>
-                )}
             </div>
 
             <div>
-                <input
-                    type="text"
+                <Input
                     {...register('email')}
+                    label="Email"
                     placeholder="Email"
+                    helperText={Object(errors.email).message?.toString()}
                     onChange={(e) => {
                         setUserInfos({ ...userInfos, email: e.target.value });
                     }}
+                    fullWidth
                 />
-                {errors.email && (
-                    <span>{errors.email.message?.toString()}</span>
-                )}
-                {/* {error && (
-                    <span>Email is already taken.</span>
-                )} */}
             </div>
             <div>
-                <input
-                    type="password"
+                <Input.Password
                     {...register('password')}
+                    label="Password"
                     placeholder="Password"
+                    helperText={Object(errors.password).message?.toString()}
                     onChange={(e) => {
                         setUserInfos({ ...userInfos, password: e.target.value });
                     }}
+                    fullWidth
                 />
-                {errors.password && (
-                    <span>{errors.password.message?.toString()}</span>
-                )}
             </div>
 
             <div>
-                <input
-                    type="password"
+                <Input.Password
                     {...register('confirmPassword')}
+                    label="Confirm Password"
                     placeholder="Confirm password"
+                    helperText={Object(errors.confirmPassword).message?.toString()}
+                    fullWidth
                 />
-                {errors.confirmPassword && (
-                    <span>{errors.confirmPassword.message?.toString()}</span>
-                )}
             </div>
 
+            <div style={{ marginTop: "50px" }} className="flex flex-col">
+                <Button
+                    className={styles["nextui-button"]}
+                    disabled={loading ? true : false}
+                    type="submit"
+                >
+                    {loading ?
+                        <Loading color="currentColor" size="sm" />
+                        :
+                        "Register"
+                    }
+                </Button>
+                <span style={{ margin: "5px 0" }} className="text-center text-light">- or -</span>
+                <SignInWithGoogleButton />
+            </div>
 
-
-            <button type="submit">
-                Register
-            </button>
         </form>
     )
 }

@@ -138,3 +138,7 @@ a {
   color: rgb(236, 87, 87);
   font-size: 12px;
 }
+
+.nextui-user-name {
+  color: white
+}

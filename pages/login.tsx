@@ -29,14 +29,14 @@ function Login() {
 
     const signUp = async () => {
         setLoading(true);
-        const success = await login(userInfos.email, userInfos.password)
+        const success = await login(userInfos.email, userInfos.password);
         if (loginError && Object.keys(Object(loginError["customData"])).length > 0) {
             setLoading(false);
-            return setError("password", { type: 'custom', message: "Too many attempts, please try again later." })
+            return setError("password", { type: 'custom', message: "Too many attempts, please try again later." });
         }
         if (!success) {
             setLoading(false);
-            setError("password", { type: 'custom', message: "Wrong credentials." })
+            setError("password", { type: 'custom', message: "Wrong credentials." });
         }
     }
 

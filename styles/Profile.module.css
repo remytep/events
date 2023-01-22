@@ -1,4 +1,8 @@
-.form {
+.nextui-button {
+    z-index: 1;
+}
+
+.profile-form {
     display: grid;
     grid-template-columns: repeat(1, 1fr);
     grid-auto-rows: 5.5rem;
@@ -7,23 +11,8 @@
     margin: 0 auto;
 }
 
-.nextui-button {
-    z-index: 1;
-}
-
-.nextui-button.google {
-    color: #11181C;
-    background-color: white;
-}
-
-@media screen and (min-width: 320px) {
-    .form div {
-        width: 50vw;
-    }
-}
-
 @media screen and (min-width: 700px) {
-    .form div {
+    .profile-form {
         width: 300px;
     }
 }

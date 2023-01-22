@@ -2,6 +2,7 @@ import { useSignOut } from 'react-firebase-hooks/auth';
 import { auth } from '../../config/firebase';
 import { useRouter } from 'next/router';
 import { Button } from '@nextui-org/react';
+import styles from "../../styles/Profile.module.css"
 
 const SignOutButton = () => {
     const [signOut, loading, error] = useSignOut(auth);
@@ -18,6 +19,8 @@ const SignOutButton = () => {
     }
     return (
         <Button
+            className={styles["nextui-button"]}
+
             onPress={async () => {
                 await signOut();
             }}

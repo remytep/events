@@ -60,7 +60,7 @@ function Register() {
         //if the user is created, we can store his information
         if (user && !Object(user).displayName) {
             updateProfile({ displayName: userInfos.handle, photoURL: downloadURL })
-            axios.post("/api/user/", userInfos)
+            axios.post("/api/user/", Object.assign(userInfos, { photoURL: downloadURL }))
                 .then((res) => console.log(res.data))
         }
         //if we get an error, then email is already taken

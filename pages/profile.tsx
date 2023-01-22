@@ -15,6 +15,8 @@ import { Input, Textarea, Button, Image } from '@nextui-org/react';
 import SignOutButton from "../components/auth/SignOutButton";
 import axios from "axios"
 import { doc } from "@firebase/firestore";
+import styles from "../styles/Profile.module.css"
+import { Loading } from '@nextui-org/react';
 
 function Profile() {
     const [userInfos, setUserInfos] = useState({
@@ -47,9 +49,10 @@ function Profile() {
     const [updateProfile, updating, error] = useUpdateProfile(auth);
     const storageRef = ref(storage, "users/" + user?.uid);
     const [uploadFile, uploading, snapshot, uploadError] = useUploadFile();
-    const [value, loading, downloadError] = useDownloadURL(ref(storage, "users/" + user?.uid));
+    const [value, downloadLoading, downloadError] = useDownloadURL(ref(storage, "users/" + user?.uid));
     const [selectedFile, setSelectedFile] = useState<File>();
     const [updateEmail, emailUpdating, emailError] = useUpdateEmail(auth);
+    const [loading, setLoading] = useState(false);
 
 
     useEffect(() => {
@@ -68,10 +71,14 @@ function Profile() {
                 contentType: 'image/jpeg'
             }).then(() => {
                 updateProfile({ displayName: user?.displayName, photoURL: value })
+                axios.put("/api/user", Object.assign(userInfos, { photoURL: value }))
+                    .then((res) => {
+                        setLoading(false);
+                        console.log(res)
+                    })
                 reload();
             })
             setSelectedFile(undefined);
-            console.log(user)
         }
 
     }, [user, selectedFile])
@@ -82,18 +89,18 @@ function Profile() {
         }
         const success = await updateEmail(userInfos.email);
 
-        if (success) {
-            updateProfile({ displayName: userInfos?.handle, photoURL: value || user?.photoURL })
-            axios.put("/api/user", Object.assign(userInfos, { oldHandle: defaultValues.handle }))
-                .then((res) => {
-                    console.log(res)
-                })
-            //update default values
-            setDefaultValues(userInfos)
-        }
-        else {
+        if (!success) {
             return setError("email", { type: 'custom', message: 'Email is already taken.' })
         }
+
+        updateProfile({ displayName: userInfos?.handle, photoURL: value })
+        axios.put("/api/user", Object.assign(userInfos, { oldHandle: defaultValues.handle, photoURL: value }))
+            .then((res) => {
+                console.log(res)
+            })
+        //update default values
+        setDefaultValues(userInfos)
+
     }
 
     if (user)
@@ -103,18 +110,23 @@ function Profile() {
                 {uploading && <span>Uploading file...</span>}
                 {snapshot && <span>Snapshot: {JSON.stringify(snapshot)}</span>}
                 {selectedFile && <span>Selected file: {selectedFile.name}</span>} */}
-                <form onSubmit={handleSubmit(update)}>
+                <form className={styles["profile-form"]} onSubmit={handleSubmit(update)}>
                     <span className="text-light text-center">{user.displayName}'s Profile</span>
-                    <label htmlFor="upload">
-                        <Image
-                            showSkeleton
-                            width={150}
-                            height={150}
-                            objectFit="contain"
-                            src={Object(user).photoURL?.toString()}
-                            referrerPolicy="no-referrer"
-                        />
-                    </label>
+                    {loading ?
+                        <Loading /> :
+
+                        <label htmlFor="upload">
+                            <Image
+                                showSkeleton
+                                width={150}
+                                height={150}
+                                objectFit="cover"
+                                src={Object(user).photoURL?.toString()}
+                                referrerPolicy="no-referrer"
+                            />
+                        </label>
+                    }
+
                     <SignOutButton />
 
                     {/* {!loading && value && (
@@ -129,42 +141,42 @@ function Profile() {
                         type="file"
                         onChange={(e) => {
                             const file = e.target.files ? e.target.files[0] : undefined;
+                            setLoading(true)
                             setSelectedFile(file);
                         }}
+                        accept="image/png, image/jpeg, image/gif"
                     />
-                    <div className="grid">
-                        <Input
-                            {...register("handle")}
-                            label="Handle"
-                            placeholder="Handle"
-                            initialValue={Object(user).displayName?.toString()}
-                            helperText={Object(errors.handle).message?.toString()}
-                            onChange={(e) => {
-                                setUserInfos({ ...userInfos, handle: String(e.target.value) })
-                            }}
-                        />
+                    <Input
+                        {...register("handle")}
+                        label="Handle"
+                        placeholder="Handle"
+                        initialValue={Object(user).displayName?.toString()}
+                        helperText={Object(errors.handle).message?.toString()}
+                        onChange={(e) => {
+                            setUserInfos({ ...userInfos, handle: String(e.target.value) })
+                        }}
+                    />
 
-                        <Input
-                            {...register("email")}
-                            label="Email"
-                            placeholder="Email"
-                            initialValue={Object(user).email?.toString()}
-                            helperText={Object(errors.email).message?.toString()}
-                            onChange={(e) => {
-                                setUserInfos({ ...userInfos, email: String(e.target.value) })
-                            }}
-                        />
+                    <Input
+                        {...register("email")}
+                        label="Email"
+                        placeholder="Email"
+                        initialValue={Object(user).email?.toString()}
+                        helperText={Object(errors.email).message?.toString()}
+                        onChange={(e) => {
+                            setUserInfos({ ...userInfos, email: String(e.target.value) })
+                        }}
+                    />
 
-                        <Textarea
-                            label="Presentation"
-                            placeholder="Presentation"
-                            initialValue={Object(user).presentation?.toString()}
-                            onChange={(e) => {
-                                setUserInfos({ ...userInfos, presentation: String(e.target.value) })
-                            }}
-                        />
+                    <Textarea
+                        label="Presentation"
+                        placeholder="Presentation"
+                        initialValue={Object(user).presentation?.toString()}
+                        onChange={(e) => {
+                            setUserInfos({ ...userInfos, presentation: String(e.target.value) })
+                        }}
+                    />
 
-                    </div>
                     {JSON.stringify(defaultValues) !== JSON.stringify(userInfos)
                         && <Button type="submit">Edit</Button>
                     }

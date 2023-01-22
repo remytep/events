@@ -6,6 +6,11 @@
       "dom.iterable",
       "esnext"
     ],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -23,7 +28,8 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "context/AuthContext.ts"
+    "context/AuthContext.ts",
+    "public/google.ts"
   ],
   "exclude": [
     "node_modules"

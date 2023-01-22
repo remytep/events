@@ -10,6 +10,7 @@
 .navbarTitle {
   font-size: 1.4rem;
 }
+
 .dialog {
   position: relative;
   z-index: 40;
@@ -44,8 +45,12 @@
   font-size: 1.7rem;
 }
 
-.drawerNavLink  {
+.drawerNavLink {
   font-size: 1.8rem;
+}
+
+.nextui-user-name {
+  color: white;
 }
 
 .userIcon {
@@ -65,6 +70,7 @@
     color: white;
     padding: 2rem 3rem;
   }
+
   .navbarTitle {
     font-size: 1.4rem;
   }
@@ -72,6 +78,7 @@
   .navbarButton {
     display: none;
   }
+
   .navbarDesktop {
     display: flex;
     gap: 2rem;

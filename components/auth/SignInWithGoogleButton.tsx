@@ -3,6 +3,9 @@ import { doc } from "firebase/firestore";
 import { useRouter } from "next/router";
 import { useSignInWithGoogle } from "react-firebase-hooks/auth";
 import { auth, db } from "../../config/firebase";
+import { Button } from "@nextui-org/react";
+import styles from "../../styles/Auth.module.css"
+import { GoogleIcon } from "../Icons/GoogleIcon";
 
 const SignInWithGoogleButton = () => {
 
@@ -24,13 +27,12 @@ const SignInWithGoogleButton = () => {
             handle: user.user.displayName,
             email: user.user.email,
         })
-            .then((res) => {
-                router.push("/");
-            })
     }
 
     return (
-        <button onClick={() => signInWithGoogle()}>Sign In with Google</button>
+        <Button onPress={() => signInWithGoogle()} className={`${styles["nextui-button"]} ${styles["google"]}`} icon={<GoogleIcon filled={undefined} size={undefined} height={undefined} width={undefined} label={undefined} />} >
+            Sign-in with Google
+        </Button>
     );
 }
 export default SignInWithGoogleButton;

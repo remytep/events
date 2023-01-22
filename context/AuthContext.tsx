@@ -9,14 +9,16 @@ const initialState = {
     user: Object(auth.currentUser),
     registration: (email: string, password: string) => { },
     login: (email: string, password: string) => { },
+    reload: () => { },
+    registerLoading: Boolean(),
     registerError: null,
     loginError: null,
+
 };
 
 export const AuthContext = createContext(initialState);
 
 function AuthProvider({ children }: PropsWithChildren<{}>) {
-
 
     const [
         createUserWithEmailAndPassword,
@@ -37,12 +39,14 @@ function AuthProvider({ children }: PropsWithChildren<{}>) {
     ] = useSignInWithEmailAndPassword(auth);
 
     const login = (email: string, password: string) => {
-        signInWithEmailAndPassword(email, password);
+        return signInWithEmailAndPassword(email, password);
+    }
+
+    const reload = () => {
+        auth.currentUser?.reload();
     }
 
     let displayName = Object(auth.currentUser)?.displayName?.toString();
-    console.log("hey", displayName);
-
 
     const [value, loading, error] = useDocument(
         doc(db, 'users', displayName || "%"),
@@ -51,13 +55,13 @@ function AuthProvider({ children }: PropsWithChildren<{}>) {
         }
     );
 
-    console.log(value?.data())
-
     return (
         <AuthContext.Provider value={{
-            user: Object.assign(Object(auth.currentUser), value?.data()),
+            user: auth.currentUser ? Object.assign(Object(auth.currentUser), value?.data()) : null,
             registration,
             login,
+            reload,
+            registerLoading: registerLoading,
             registerError: Object(registerError),
             loginError: Object(loginError),
         }}>

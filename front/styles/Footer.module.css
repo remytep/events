@@ -1,0 +1,27 @@
+.footer {
+  height: 5vh;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.footerCopyright {
+  flex-grow: 1;
+  color: white;
+  margin-top: 20px;
+  padding: 0.5rem 1rem;
+  font-size: 0.7rem;
+  text-align: right;
+}
+
+@media screen and (min-width: 700px) {
+  .footerCopyright {
+    padding: 2rem;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .footerCopyright {
+    padding: 2rem 3rem;
+  }
+}

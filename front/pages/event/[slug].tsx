@@ -60,9 +60,11 @@ function EventPage() {
             </div>
           </div>
         </div>
-        <p className={styles.description}>
-          {data.fields.longdescription_fr.replace(/(<([^>]+)>)/gi, "")}
-        </p>
+        {data.fields.longdescription_fr ? (
+          <p className={styles.description}>
+            {data.fields.longdescription_fr.replace(/(<([^>]+)>)/gi, "")}
+          </p>
+        ) : null}
       </div>
     );
   }

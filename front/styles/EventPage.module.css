@@ -1,0 +1,72 @@
+.container {
+  display: flex;
+  padding: 0 1rem;
+  flex-grow: 1;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+.banner {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 1rem;
+}
+
+.eventInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.imageContainer {
+  position: relative;
+  width: 100%;
+  height: auto;
+}
+
+.dateRange {
+  color: white;
+}
+
+.locationName {
+  display: flex;
+  flex-direction: row;
+  color: white;
+  gap: 0.5rem;
+}
+
+.button {
+  padding: 0.5rem;
+  border-radius: 10px;
+}
+
+.description {
+  color: white;
+  font-size: 1.2rem;
+}
+
+@media screen and (min-width: 700px) {
+  .container {
+    padding: 0 2rem;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .container {
+    padding: 0 3rem;
+  }
+
+  .banner {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+  }
+
+  .imageContainer {
+    position: relative;
+    width: 50%;
+    height: auto;
+  }
+}

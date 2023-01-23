@@ -6,7 +6,7 @@ import styles from "../styles/Home.module.css";
 
 import Filters from "../components/Filters/Filters";
 import EventsList from "../components/Events/EventsList";
-import EventPagination from "../components/EventPagination/EventPagination";
+import EventPagination from "../components/Pagination/EventPagination";
 
 export default function Home() {
   const { coords, isGeolocationEnabled, getPosition } = useGeolocated({

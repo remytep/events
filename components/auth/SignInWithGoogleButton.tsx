@@ -23,9 +23,10 @@ const SignInWithGoogleButton = () => {
     }
 
     if (user) {
-        axios.post("/api/register/", {
+        axios.post("/api/user/", {
             handle: user.user.displayName,
             email: user.user.email,
+            photoURL: user.user.photoURL,
         })
     }
 

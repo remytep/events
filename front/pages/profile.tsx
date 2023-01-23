@@ -71,7 +71,7 @@ function Profile() {
                 contentType: 'image/jpeg'
             }).then(() => {
                 updateProfile({ displayName: user?.displayName, photoURL: value })
-                axios.put("/api/user", Object.assign(userInfos, { photoURL: value }))
+                axios.put("/api/user", Object.assign(userInfos, { id: user.uid, photoURL: value }))
                     .then((res) => {
                         setLoading(false);
                         console.log(res)

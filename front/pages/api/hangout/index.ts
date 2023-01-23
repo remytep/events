@@ -10,15 +10,13 @@ export default function handler(
     res: NextApiResponse
 ) {
 
-    function createUser() {
-        const docRef = doc(db, 'user', req.body.id);
-
+    function createHangout() {
         try {
-            setDoc(docRef, {
-                email: req.body.email,
-                handle: req.body.handle,
-                presentation: "",
-                photoURL: req.body.photoURL
+            setDoc(doc(collection(db, "hangout")), {
+                event: req.body.event,
+                host: req.body.host,
+                participants: [],
+                private: req.body.private
             });
             return res.status(200).send("created");
         }
@@ -33,7 +31,7 @@ export default function handler(
 
         try {
             setDoc(docRef, {
-                handle: req.body.handle || "",
+                event: req.body.handle || "",
                 email: req.body.email || "",
                 presentation: req.body.presentation || "",
                 photoURL: req.body.photoURL || ""
@@ -48,7 +46,7 @@ export default function handler(
 
     switch (req.method) {
         case "POST":
-            createUser();
+            createHangout();
             break;
         case "PUT":
             updateUser();

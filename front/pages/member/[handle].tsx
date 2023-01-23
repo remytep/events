@@ -53,7 +53,8 @@ function User() {
     //     getDoc(userInfos.doc).then((doc) => {
     //         console.log(doc)
     //     })
-
+    console.log(userInfos)
+    console.log()
     if (!loading)
         return (
             <>
@@ -90,7 +91,7 @@ function User() {
                                                             }
                                                         </h4>
 
-                                                        <p>{value?.docs[i].data().participants.length + 1} participants</p>
+                                                        <p>{(value?.docs[i].data().participants.length | 0) + 1} participant(s)</p>
                                                     </Card.Body>
 
                                                 </Card>

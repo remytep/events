@@ -5,8 +5,8 @@ import { auth, db, storage } from "../config/firebase";
 import axios from "axios";
 import * as yup from 'yup';
 import { useForm } from "react-hook-form";
-import { doc } from "firebase/firestore";
-import { useDocument } from 'react-firebase-hooks/firestore';
+import { collection, doc, query, where } from "firebase/firestore";
+import { useCollection, useDocument } from 'react-firebase-hooks/firestore';
 import { useDownloadURL } from 'react-firebase-hooks/storage';
 import { AuthContext } from "../context/AuthContext";
 import { ref } from "@firebase/storage";
@@ -38,17 +38,18 @@ function Register() {
     });
 
     //check if user handle is already registered
-    const [value, docLoading, docError] = useDocument(
-        doc(db, 'users', userInfos.handle || "%"),
+    const [value, userLoading, error] = useCollection(
+        query(collection(db, 'user'), where("handle", "==", userInfos.handle)),
         {
             snapshotListenOptions: { includeMetadataChanges: true },
         }
     );
 
     const createUser = () => {
-        //if handle is not available, we set an error message
         setLoading(true);
-        if (value?.data()) {
+        console.log(Object([value])[0]["docs"][0]?.data())
+        // if handle is not available, we set an error message
+        if (Object([value])[0]["docs"][0]?.data()) {
             setLoading(false);
             return setError("handle", { type: 'custom', message: 'Handle is already taken.' })
         }
@@ -60,7 +61,7 @@ function Register() {
         //if the user is created, we can store his information
         if (user && !Object(user).displayName) {
             updateProfile({ displayName: userInfos.handle, photoURL: downloadURL })
-            axios.post("/api/user/", Object.assign(userInfos, { photoURL: downloadURL }))
+            axios.post("/api/user/", Object.assign(userInfos, { photoURL: downloadURL, id: user.uid }))
                 .then((res) => console.log(res.data))
         }
         //if we get an error, then email is already taken

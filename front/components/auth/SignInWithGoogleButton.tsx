@@ -3,14 +3,15 @@ import { doc } from "firebase/firestore";
 import { useRouter } from "next/router";
 import { useSignInWithGoogle } from "react-firebase-hooks/auth";
 import { auth, db } from "../../config/firebase";
-import { Button } from "@nextui-org/react";
+import { Button, Loading } from "@nextui-org/react";
 import styles from "../../styles/Auth.module.css"
 import { GoogleIcon } from "../Icons/GoogleIcon";
+import { useEffect } from "react";
 
 const SignInWithGoogleButton = () => {
 
     const [signInWithGoogle, user, loading, error] = useSignInWithGoogle(auth);
-    const router = useRouter();
+
     if (error) {
         return (
             <div>
@@ -19,16 +20,18 @@ const SignInWithGoogleButton = () => {
         );
     }
     if (loading) {
-        return <p>Loading...</p>;
+        return <Loading />;
     }
 
-    if (user) {
+    if (user && !loading) {
         axios.post("/api/user/", {
+            id: user.user.uid,
             handle: user.user.displayName,
             email: user.user.email,
             photoURL: user.user.photoURL,
         })
     }
+
 
     return (
         <Button onPress={() => signInWithGoogle()} className={`${styles["nextui-button"]} ${styles["google"]}`} icon={<GoogleIcon filled={undefined} size={undefined} height={undefined} width={undefined} label={undefined} />} >

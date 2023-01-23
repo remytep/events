@@ -49,7 +49,7 @@ function AuthProvider({ children }: PropsWithChildren<{}>) {
     let displayName = Object(auth.currentUser)?.displayName?.toString();
 
     const [value, loading, error] = useDocument(
-        doc(db, 'users', displayName || "%"),
+        doc(db, 'user', displayName || "%"),
         {
             snapshotListenOptions: { includeMetadataChanges: true },
         }

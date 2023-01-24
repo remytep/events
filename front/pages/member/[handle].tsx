@@ -88,7 +88,7 @@ function User() {
                             <div className={styles["event-grid"]}>
                                 {events?.map((event, i) => {
                                     return (
-                                        <Link key={i} href={`/hangout/${value?.docs[i].id}`}>
+                                        <Link key={i} href={`/hangout/${value?.docs[i]["id"]}`}>
                                             <Card css={{ my: "$5", maxWidth: "502px" }}>
                                                 <Card.Body>
                                                     <img

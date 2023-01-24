@@ -15,8 +15,8 @@ import { Input, Textarea, Button, Image } from '@nextui-org/react';
 import SignOutButton from "../components/auth/SignOutButton";
 import axios from "axios"
 import { doc } from "@firebase/firestore";
-import styles from "../styles/Profile.module.css"
 import { Loading } from '@nextui-org/react';
+import styles from "../styles/Profile.module.css"
 
 function Profile() {
     const [userInfos, setUserInfos] = useState({
@@ -115,14 +115,11 @@ function Profile() {
                     {loading ?
                         <Loading /> :
 
-                        <label htmlFor="upload">
-                            <Image
-                                css={{ borderRadius: "50%", cursor: "pointer" }}
-                                showSkeleton
-                                width={150}
-                                height={150}
-                                objectFit="cover"
-                                src={Object(user).photoURL?.toString()}
+                        <label style={{ margin: "0 auto" }} htmlFor="upload">
+                            <img
+                                className={styles["profile-pic"]}
+                                src={user.photoURL?.toString()}
+                                referrerPolicy="no-referrer"
                             />
                         </label>
                     }

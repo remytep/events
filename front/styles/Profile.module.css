@@ -2,6 +2,13 @@
     z-index: 1;
 }
 
+.profile-pic {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
 .profile-form {
     display: grid;
     grid-template-columns: repeat(1, 1fr);

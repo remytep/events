@@ -19,7 +19,6 @@ function EventPage() {
         setData(response.data.records[0]);
       })
       .catch((error) => console.log(error));
-    //https://public.opendatasoft.com/api/records/1.0/search/?dataset=evenements-publics-openagenda&q=&rows=12&facet=keywords_fr&facet=updatedat&facet=firstdate_end&facet=lastdate_begin&facet=lastdate_end&facet=location_city&facet=location_department&facet=location_region&facet=location_countrycode&facet=slug&refine.slug=rencontre-forum-urbain-9&geofilter.distance=+44.84062540000001%2C+-0.5733277%2C3000
   }, []);
   if (data) {
     return (

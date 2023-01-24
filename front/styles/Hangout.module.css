@@ -1,0 +1,74 @@
+.container {
+  width: 100%;
+  height: 100%;
+  padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.title {
+  color: white;
+}
+
+.mapContainer {
+  width: 100%;
+  height: 18rem;
+  border: 1px solid gray;
+  border-radius: 5px;
+  position: relative;
+}
+
+.hangoutInfos {
+  display: flex;
+  gap: 1rem;
+}
+
+.participants {
+  border: solid 1px gray;
+  border-radius: 10px;
+  padding: 2rem;
+  width: 30%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: auto;
+}
+
+.hangoutChat {
+  border: solid 1px gray;
+  border-radius: 10px;
+  width: 70%;
+}
+
+@media screen and (min-width: 700px) {
+  .mapContainer {
+    width: 100%;
+    height: 23rem;
+    border: 1px solid gray;
+    border-radius: 5px;
+  }
+  .container {
+    padding: 0 2rem;
+  }
+}
+
+@media screen and (min-width: 800px) {
+  .mapContainer {
+    width: 100%;
+    height: 27rem;
+    border: 1px solid gray;
+    border-radius: 5px;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .mapContainer {
+    width: 100%;
+    height: 25vw;
+    border: 1px solid gray;
+    border-radius: 5px;
+  }
+  .container {
+    padding: 0 3rem;
+  }
+}

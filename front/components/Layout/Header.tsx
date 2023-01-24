@@ -47,7 +47,7 @@ function Header() {
           <nav className={`${styles.navbarDesktop}`}>
             {currentUser ? (
               <>
-                <Link href="/events">Events</Link>
+                <Link href="/hangouts">Hangouts</Link>
                 <Link href="/profile">Profile</Link>
               </>
             ) : (
@@ -132,8 +132,8 @@ function Header() {
                   <nav className={styles.drawerNav}>
                     {currentUser ? (
                       <>
-                        <Link href="/events" className={styles.drawerNavLink}>
-                          Events
+                        <Link href="/hangouts" className={styles.drawerNavLink}>
+                          Hangouts
                         </Link>
                         <Link href="/profile" className={styles.drawerNavLink}>
                           Profile

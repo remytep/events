@@ -2,20 +2,23 @@ import React, { useState, useEffect } from "react";
 import { Loading, Image, User as UserNext } from "@nextui-org/react";
 import axios from "axios";
 
-function UserCard({ handle }) {
+function UserCard({ id, host }) {
   const [userInfos, setUserInfos] = useState();
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    if (handle) {
-      axios.get("/api/user/" + handle).then((res) => {
-        setInterval(() => {
-          setLoading(false);
-        }, 1500);
-        console.log(res);
-        setUserInfos(res.data);
-      });
+    if (id) {
+      axios
+        .get("/api/host/" + id)
+        .then((res) => {
+          setInterval(() => {
+            setLoading(false);
+          }, 1500);
+          console.log(res.data.doc);
+          setUserInfos(res.data.doc);
+        })
+        .catch((error) => console.log(error));
     }
-  }, [handle]);
+  }, [id]);
 
   if (!loading)
     return (
@@ -27,8 +30,8 @@ function UserCard({ handle }) {
                 size="xl"
                 className="nextui-user-name"
                 src={Object(userInfos).photoURL?.toString()}
-                name={`@${handle}`}
-                description={Object(userInfos).presentation?.toString()}
+                name={`@${userInfos.handle}`}
+                description={host ? "Host" : ""}
               />
             </div>
           </>

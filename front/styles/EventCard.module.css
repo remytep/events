@@ -28,6 +28,14 @@
   mix-blend-mode: difference;
 }
 
+.more {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .eventInfos {
   display: flex;
   flex-direction: column;

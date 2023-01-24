@@ -9,6 +9,7 @@
 
 .title {
   color: white;
+  font-size: 2rem;
 }
 
 .mapContainer {
@@ -19,18 +20,36 @@
   position: relative;
 }
 
+.eventInfos {
+  border: solid 1px gray;
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+.locationName {
+  display: flex;
+  flex-direction: row;
+  color: white;
+  gap: 0.5rem;
+}
+
+.dateRange {
+  color: white;
+}
+
 .hangoutInfos {
   display: flex;
+  flex-direction: column;
   gap: 1rem;
 }
 
 .participants {
   border: solid 1px gray;
   border-radius: 10px;
-  padding: 2rem;
-  width: 30%;
+  padding: 1rem;
+  width: 100%;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 1;
   grid-template-rows: auto;
 }
 
@@ -51,6 +70,12 @@
   .container {
     padding: 0 2rem;
   }
+
+  .participants {
+    padding: 2rem;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: auto;
+  }
 }
 
 @media screen and (min-width: 800px) {
@@ -59,6 +84,20 @@
     height: 27rem;
     border: 1px solid gray;
     border-radius: 5px;
+  }
+
+  .hangoutInfos {
+    flex-direction: row;
+  }
+
+  .participants {
+    padding: 2rem;
+    min-width: 40vw;
+    width: 100%;
+  }
+
+  .hangoutChat {
+    width: 70%;
   }
 }
 
@@ -72,5 +111,12 @@
 
   .container {
     padding: 0 3rem;
+  }
+
+  .participants {
+    padding: 2rem;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: auto;
+    width: 30%;
   }
 }

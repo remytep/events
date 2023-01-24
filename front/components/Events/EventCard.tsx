@@ -30,7 +30,9 @@ function EventCard({ data }) {
             />
           </div>
         ) : null}
-        <Link href={`/event/${data.fields.slug}`}>More</Link>
+        <Link href={`/event/${data.fields.slug}`} className={styles.more}>
+          More
+        </Link>
       </div>
       <div className={styles.eventInfos}>
         <p className={styles.dateRange}>{data.fields.daterange_fr}</p>

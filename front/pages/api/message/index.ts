@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { useDocument } from 'react-firebase-hooks/firestore';
-import { collection, doc, setDoc, getDoc, deleteDoc, updateDoc } from "firebase/firestore";
+import { collection, doc, setDoc, getDoc, deleteDoc } from "firebase/firestore";
 import { auth, db } from '../../../config/firebase';
 import axios from "axios";
 
@@ -10,13 +10,13 @@ export default function handler(
     res: NextApiResponse
 ) {
 
-    function createHangout() {
+    function createMessage() {
         try {
-            setDoc(doc(collection(db, "hangout")), {
-                event: req.body.event,
-                host: req.body.host,
-                participants: [],
-                private: req.body.private
+            setDoc(doc(collection(db, "message")), {
+                content: req.body.content,
+                createdAt: Date.now(),
+                hangout: req.body.hangout,
+                sender: req.body.sender,
             });
             return res.status(200).send("created");
         }
@@ -26,10 +26,15 @@ export default function handler(
         }
     }
 
-    function updateHangout() {
+    function updateUser() {
+        const docRef = doc(db, 'user', req.body.id);
+
         try {
-            updateDoc(doc(collection(db, "hangout"), req.body.id), {
-                participants: req.body.participants,
+            setDoc(docRef, {
+                event: req.body.handle || "",
+                email: req.body.email || "",
+                presentation: req.body.presentation || "",
+                photoURL: req.body.photoURL || ""
             });
             //if user changed his handle, we delete the old one
             return res.status(200).send("updated");
@@ -41,10 +46,10 @@ export default function handler(
 
     switch (req.method) {
         case "POST":
-            createHangout();
+            createMessage();
             break;
         case "PUT":
-            updateHangout();
+            updateUser();
             break;
     }
 

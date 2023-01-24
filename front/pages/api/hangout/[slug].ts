@@ -23,10 +23,26 @@ export default function handler(
         }
     }
 
+    async function deleteHangout() {
+        const hangout = await deleteDoc(docRef);
+
+        try {
+            return res.status(200).send("deleted");
+        }
+        catch (err) {
+            return res.status(500).send(err);
+
+        }
+    }
+
     switch (req.method) {
         case "GET":
             getHangout();
             break;
+        case "DELETE":
+            deleteHangout();
+            break;
+
     }
 
 }

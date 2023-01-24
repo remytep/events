@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Loading, Image, User as UserNext } from "@nextui-org/react";
 import axios from "axios";
+import Link from "next/link";
 
 function UserCard({ id, host }) {
   const [userInfos, setUserInfos] = useState();
@@ -26,13 +27,15 @@ function UserCard({ id, host }) {
         {userInfos ? (
           <>
             <div style={{ margin: "0 auto" }} className="text-light">
-              <UserNext
-                size="xl"
-                className="nextui-user-name"
-                src={Object(userInfos).photoURL?.toString()}
-                name={`@${userInfos.handle}`}
-                description={host ? "Host" : ""}
-              />
+              <Link href={`/member/${userInfos.handle}`}>
+                <UserNext
+                  size="xl"
+                  className="nextui-user-name"
+                  src={Object(userInfos).photoURL?.toString()}
+                  name={`@${userInfos.handle}`}
+                  description={host ? "Host" : ""}
+                />
+              </Link>
             </div>
           </>
         ) : null}

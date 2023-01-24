@@ -54,44 +54,6 @@ function User() {
         }, 1500);
     }, [value])
 
-
-    useEffect(() => {
-        if (handle && !userInfos) {
-            axios.get("/api/user/" + handle).then((res) => {
-                setUserInfos(res.data);
-            });
-        }
-    }, [handle]);
-
-    useEffect(() => {
-        if (value && events.length === 0) {
-            value?.docs.map((doc) => {
-                let data = doc.data();
-                axios.get("/api/host/" + data["host"]).then((res) => {
-                    console.log(res);
-                    setHosts((hosts) => [...hosts, res.data]);
-                });
-                axios
-                    .get(
-                        "https://public.opendatasoft.com/api/records/1.0/search/?dataset=evenements-publics-openagenda&q=&facet=slug&refine.slug=" +
-                        data["event"]
-                    )
-                    .then((res) => {
-                        setEvents((events) => [...events, res.data.records[0]]);
-                    });
-            });
-            setInterval(() => {
-                setLoading(false);
-            }, 1500);
-        }
-    }, [value]);
-
-    console.log(hosts);
-    // if (userInfos)
-    //     getDoc(userInfos.doc).then((doc) => {
-    //         console.log(doc)
-    //     })
-
     if (!loading)
         return (
             <>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -7,21 +7,24 @@ import axios from "axios";
 import styles from "../../styles/Hangout.module.css";
 import UserCard from "../../components/hangouts/UserCard";
 import { db } from "../../config/firebase";
-import { collection, query, where, getDoc } from "firebase/firestore";
+import { collection, query, where, getDoc, orderBy } from "firebase/firestore";
 import { useCollection } from 'react-firebase-hooks/firestore';
-import { Card, User } from "@nextui-org/react";
+import { Button, Card, Input } from "@nextui-org/react";
 import moment from 'moment';
-
+import { AuthContext } from "../../context/AuthContext";
+import { FaPaperPlane } from "react-icons/fa";
+import { IconButton } from "../../components/Icons/IconButton"
 const libraries = ["places"];
 function Hangout() {
   const router = useRouter();
+  const { user, reload } = useContext(AuthContext);
   const [data, setData] = useState(null);
-  const [senders, setSenders] = useState([]);
-
+  const [message, setMessage] = useState("");
   const [eventData, setEventData] = useState(null);
   const [participants, setParticipants] = useState([]);
   const [center, setCenter] = useState({ lat: 0, lng: 0 });
   const { hangoutId } = router.query;
+
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
     libraries,
@@ -33,15 +36,6 @@ function Hangout() {
       snapshotListenOptions: { includeMetadataChanges: true },
     }
   );
-  useEffect(() => {
-    value?.docs.map((doc) => {
-      let data = doc.data();
-      axios.get('/api/host/' + data["sender"])
-        .then((res) => {
-          setSenders((senders) => [...senders, res.data])
-        })
-    })
-  }, [value])
 
   useEffect(() => {
     axios
@@ -49,7 +43,7 @@ function Hangout() {
       .then((response) => {
         console.log(response.data);
         setData(response.data);
-        setParticipants(response.data.participants);
+        setParticipants([...response.data.participants, data?.host]);
         axios
           .get(
             "https://public.opendatasoft.com/api/records/1.0/search/?dataset=evenements-publics-openagenda&q=&facet=slug&refine.slug=" +
@@ -68,13 +62,46 @@ function Hangout() {
       .catch((error) => {
         console.log(error);
       });
-  }, [hangoutId]);
+  }, [hangoutId, participants.length]);
+
+  const sendMessage = () => {
+    axios.post("/api/message", { content: message, hangout: hangoutId, sender: user.uid })
+      .then((res) => {
+        console.log(res);
+      })
+  }
+
+  const joinHangout = (leave?: boolean) => {
+    let newParticipants = [...participants, user?.uid];
+    if (Object(data)?.host === user?.uid && leave) {
+      return axios.delete("/api/hangout/" + hangoutId)
+        .then((res) => {
+          router.push("/");
+        })
+    }
+    if (leave) {
+      newParticipants = participants.filter(function (value) {
+        return value !== user?.uid
+      });
+    }
+
+    axios.put("/api/hangout", { participants: newParticipants, id: hangoutId })
+      .then((res) => {
+        console.log(res);
+      })
+    setParticipants(newParticipants);
+  }
+
+
+
+  console.log(data)
+
   if (!isLoaded) return <div>Loading...</div>;
   return (
     <div className={styles.container}>
-      <Link href={`/event/${data?.event}`}>
+      <Link href={`/event/${Object(data)?.event}`}>
         {/*         <Image src={eventData?.fields.thumbnail} alt={eventData?.fields.description_fr} /> */}
-        <h1 className={styles.title}>{eventData?.fields.title_fr}</h1>
+        <h1 className={styles.title}>{Object(eventData)?.fields?.title_fr}</h1>
       </Link>
       <GoogleMap
         zoom={14}
@@ -92,7 +119,7 @@ function Hangout() {
         <Marker position={center} />
       </GoogleMap>
       <div className={styles.eventInfos}>
-        <p className={styles.dateRange}>{eventData?.fields.daterange_fr}</p>
+        <p className={styles.dateRange}>{Object(eventData)?.fields?.daterange_fr}</p>
         <span className={styles.locationName}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -106,38 +133,85 @@ function Hangout() {
               clipRule="evenodd"
             />
           </svg>
-          <p>{eventData?.fields.location_name}</p>
+          <p>{Object(eventData)?.fields?.location_name}</p>
         </span>
+        {participants?.includes(user?.uid)
+          ?
+          <Button color="error" css={{ m: 4 }} size="sm" onPress={() => joinHangout(true)}>
+            Leave hangout
+          </Button>
+          :
+          <Button css={{ m: 4 }} size="sm" onPress={() => joinHangout(false)}>
+            Join hangout
+          </Button>
+        }
+
       </div>
       <div className={styles.hangoutInfos}>
         <div className={styles.participants}>
-          <UserCard id={data.host} host={true} />
+          <UserCard id={Object(data)?.host} host={true} />
           {participants &&
-            participants.map((participant) => (
-              <UserCard key={participant} id={participant} host={false} />
-            ))}
+            participants.map((participant) => {
+              if (data?.host !== participant)
+                return (
+                  <UserCard key={participant} id={participant} host={false} />
+                )
+            }
+            )}
         </div>
+        <div style={{ width: "100%" }}>
+          <div className={styles.hangoutChat}>
+            {participants?.includes(user?.uid) ?
+              value?.docs.sort((a, b) => a.data().createdAt - b.data().createdAt)
+                .map((doc, i) => {
+                  let backgroundColor = "#5e617e";
+                  let marginLeft = "0";
+                  if (doc.data().sender === user.uid) {
+                    backgroundColor = "#0072F5";
+                    marginLeft = "auto";
+                  }
+                  return (
+                    <Card key={i} css={{ m: 5, p: 15, backgroundColor, minWidth: "150px", w: "fit-content", marginLeft }}>
+                      <UserCard key={doc.data().sender} id={doc.data().sender} host={false} />
+
+                      <span style={{ fontSize: "12px" }} className="text-light">{moment(new Date(doc.data().createdAt)).fromNow()}</span>
+                      <p className="text-light">{doc.data().content}</p>
+
+                    </Card>
+
+                  )
+
+                }) :
+              <p className="text-light">You need to join this hangout to send a message !</p>
+            }
+          </div>
+          <Input
+            css={{ w: "95%" }}
+            disabled={!participants?.includes(user?.uid) ? true : false}
+            label="Send a message"
+            placeholder={"Hello world !"}
+            onChange={(e) => {
+              setMessage(e.target.value);
+            }}
+            contentRight={
+              <IconButton
+                disabled={!message}
+                auto
+                size="mysize"
+                onPress={sendMessage}>
+                <FaPaperPlane />
+              </IconButton>
+
+            }
+          />
+        </div>
+
       </div>
-      <div className={styles.hangoutChat}>
-        {value?.docs.map((doc, i) => {
-          console.log(doc.data().createdAt)
-          return (
-            <Card css={{ backgroundColor: "black", minWidth: "150px", w: "fit-content" }}>
-              <User
-                src={senders[i]?.doc.photoURL}
-                name={senders[i]?.doc.handle}
-              />
-              <p className="text-light">{doc.data().content}</p>
-              <p className="text-light">{moment(new Date(doc.data().createdAt.seconds)).fromNow()}</p>
 
-            </Card>
 
-          )
 
-        })}
-      </div>
 
-    </div>
+    </div >
   );
 }
 

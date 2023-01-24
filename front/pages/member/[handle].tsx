@@ -60,8 +60,6 @@ function User() {
     //     getDoc(userInfos.doc).then((doc) => {
     //         console.log(doc)
     //     })
-    if (value?.docs)
-        console.log(value?.docs[0].id)
 
     if (!loading)
         return (
@@ -90,7 +88,7 @@ function User() {
                             <div className={styles["event-grid"]}>
                                 {events?.map((event, i) => {
                                     return (
-                                        <Link key={i} href={`/event/${Object(event).fields.slug}`}>
+                                        <Link key={i} href={`/hangout/${value.docs[i].id}`}>
                                             <Card css={{ my: "$5", maxWidth: "502px" }}>
                                                 <Card.Body>
                                                     <img

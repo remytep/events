@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useGeolocated } from "react-geolocated";
 import axios from "axios";
-
 import styles from "../styles/Home.module.css";
-
 import Filters from "../components/Filters/Filters";
 import EventsList from "../components/Events/EventsList";
 import EventPagination from "../components/Pagination/EventPagination";

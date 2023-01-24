@@ -10,7 +10,7 @@ export default function handler(
     res: NextApiResponse
 ) {
 
-    const docRef = doc(db, "users", "user");
+    const docRef = doc(db, 'user', "user");
 
     async function getUser() {
 
@@ -28,10 +28,12 @@ export default function handler(
     }
 
     function createUser() {
-        const docRef = doc(db, "users", req.body.handle);
+        const docRef = doc(db, 'user', req.body.id);
 
         try {
             setDoc(docRef, {
+                email: req.body.email,
+                handle: req.body.handle,
                 presentation: "",
                 photoURL: req.body.photoURL
             });
@@ -44,17 +46,16 @@ export default function handler(
     }
 
     function updateUser() {
-        const docRef = doc(db, "users", req.body.handle);
+        const docRef = doc(db, 'user', req.body.id);
 
         try {
             setDoc(docRef, {
+                handle: req.body.handle || "",
+                email: req.body.email || "",
                 presentation: req.body.presentation || "",
                 photoURL: req.body.photoURL || ""
             });
             //if user changed his handle, we delete the old one
-            if (req.body.oldHandle && req.body.oldHandle !== req.body.handle) {
-                deleteDoc(doc(db, "users", req.body.oldHandle))
-            }
             return res.status(200).send("updated");
         }
         catch (err) {

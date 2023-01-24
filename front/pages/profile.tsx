@@ -36,7 +36,7 @@ function Profile() {
     }).required();
 
     const [docValue, valueLoading, docError] = useDocument(
-        doc(db, 'users', Object(userInfos).handle || "%"),
+        doc(db, 'user', Object(userInfos).handle || "%"),
         {
             snapshotListenOptions: { includeMetadataChanges: true },
         }
@@ -94,7 +94,7 @@ function Profile() {
         }
 
         updateProfile({ displayName: userInfos?.handle, photoURL: value })
-        axios.put("/api/user", Object.assign(userInfos, { oldHandle: defaultValues.handle, photoURL: value }))
+        axios.put("/api/user", Object.assign(userInfos, { id: user.uid, photoURL: value }))
             .then((res) => {
                 console.log(res)
             })
@@ -102,7 +102,7 @@ function Profile() {
         setDefaultValues(userInfos)
 
     }
-
+    // console.log(user)
     if (user)
         return (
             <>
@@ -122,7 +122,6 @@ function Profile() {
                                 height={150}
                                 objectFit="cover"
                                 src={Object(user).photoURL?.toString()}
-                                referrerPolicy="no-referrer"
                             />
                         </label>
                     }

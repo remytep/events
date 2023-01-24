@@ -37,7 +37,7 @@
 .hangoutChat {
   border: solid 1px gray;
   border-radius: 10px;
-  width: 70%;
+  padding: 20px;
 }
 
 @media screen and (min-width: 700px) {
@@ -47,6 +47,7 @@
     border: 1px solid gray;
     border-radius: 5px;
   }
+
   .container {
     padding: 0 2rem;
   }
@@ -68,6 +69,7 @@
     border: 1px solid gray;
     border-radius: 5px;
   }
+
   .container {
     padding: 0 3rem;
   }

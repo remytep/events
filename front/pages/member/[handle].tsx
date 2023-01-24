@@ -35,7 +35,7 @@ function User() {
         }
     }, [handle])
 
-    if (value && events.length === 0) {
+    useEffect(() => {
         value?.docs.map((doc) => {
             let data = doc.data();
             axios.get('/api/host/' + data["host"])
@@ -52,8 +52,8 @@ function User() {
         setInterval(() => {
             setLoading(false)
         }, 1500);
+    }, [value])
 
-    }
 
     console.log(hosts)
     // if (userInfos)
@@ -87,6 +87,7 @@ function User() {
 
                             <div className={styles["event-grid"]}>
                                 {events?.map((event, i) => {
+                                    console.log(value?.docs[i])
                                     return (
                                         <Link key={i} href={`/hangout/${value?.docs[i]["id"]}`}>
                                             <Card css={{ my: "$5", maxWidth: "502px" }}>

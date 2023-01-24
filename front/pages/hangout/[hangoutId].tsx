@@ -1,19 +1,43 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
 import { useRouter } from "next/router";
 import styles from "../../styles/Hangout.module.css";
-
 import UserCard from "../../components/hangouts/UserCard";
+import { db } from "../../config/firebase";
+import { collection, query, where, getDoc } from "firebase/firestore";
+import { useCollection } from 'react-firebase-hooks/firestore';
+import { Card, User } from "@nextui-org/react";
+import axios from "axios";
+import moment from 'moment';
 
 const libraries = ["places"];
 function Hangout() {
   const router = useRouter();
   const [data, setData] = useState(null);
-  const { slug } = router.query;
+  const [senders, setSenders] = useState([]);
+
+  const { hangoutId } = router.query;
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
     libraries,
   });
+
+  const [value, loading, error] = useCollection(
+    query(collection(db, 'message'), where("hangout", "==", String(hangoutId))),
+    {
+      snapshotListenOptions: { includeMetadataChanges: true },
+    }
+  );
+  useEffect(() => {
+    value?.docs.map((doc) => {
+      let data = doc.data();
+      axios.get('/api/host/' + data["sender"])
+        .then((res) => {
+          setSenders((senders) => [...senders, res.data])
+        })
+    })
+  }, [value])
+
   if (!isLoaded) return <div>Loading...</div>;
   return (
     <div className={styles.container}>
@@ -40,8 +64,26 @@ function Hangout() {
           <UserCard handle={"R2J"} />
           <UserCard handle={"R2J"} />
         </div>
-        <div className={styles.hangoutChat}></div>
       </div>
+      <div className={styles.hangoutChat}>
+        {value?.docs.map((doc, i) => {
+          console.log(doc.data().createdAt)
+          return (
+            <Card css={{ backgroundColor: "black", minWidth: "150px", w: "fit-content" }}>
+              <User
+                src={senders[i]?.doc.photoURL}
+                name={senders[i]?.doc.handle}
+              />
+              <p className="text-light">{doc.data().content}</p>
+              <p className="text-light">{moment(new Date(doc.data().createdAt.seconds)).fromNow()}</p>
+
+            </Card>
+
+          )
+
+        })}
+      </div>
+
     </div>
   );
 }

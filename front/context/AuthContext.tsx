@@ -46,10 +46,10 @@ function AuthProvider({ children }: PropsWithChildren<{}>) {
         auth.currentUser?.reload();
     }
 
-    let displayName = Object(auth.currentUser)?.displayName?.toString();
+    let id = Object(auth.currentUser)?.uid?.toString();
 
     const [value, loading, error] = useDocument(
-        doc(db, 'user', displayName || "%"),
+        doc(db, 'user', id || "%"),
         {
             snapshotListenOptions: { includeMetadataChanges: true },
         }

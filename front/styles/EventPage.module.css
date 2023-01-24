@@ -40,6 +40,11 @@
 .button {
   padding: 0.5rem;
   border-radius: 10px;
+  cursor: pointer;
+}
+
+.button-disabled {
+  cursor: not-allowed;
 }
 
 .description {

@@ -97,6 +97,9 @@ a {
   opacity: 0.25;
 }
 
+.justify-between {
+  justify-content: space-between;
+}
 
 .text-center {
   text-align: center;
@@ -128,6 +131,21 @@ a {
 .map-pin {
   height: 24px;
   width: 24px;
+}
+
+.modal {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  width: 100vw;
+  height: 100vh;
+  z-index: 3;
+  background-color: rgba(0, 0, 0, 0.5);
+  margin: auto auto;
+}
+
+body:has(.modal) {
+  overflow: hidden;
 }
 
 .nextui-input-block-label {

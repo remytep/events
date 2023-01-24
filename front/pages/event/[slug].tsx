@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import axios from "axios";
@@ -6,19 +6,24 @@ import styles from "../../styles/EventPage.module.css";
 import { useCollection } from 'react-firebase-hooks/firestore';
 import { db } from "../../config/firebase";
 import { collection, query, where } from "firebase/firestore";
+import { Card, Switch, Button } from "@nextui-org/react";
+import { AuthContext } from "../../context/AuthContext";
 
 function EventPage() {
   const router = useRouter();
   const [data, setData] = useState(null);
+  const [show, setShow] = useState(false);
+  const [hangout, setHangout] = useState(false);
   const { slug } = router.query;
+  const { user, reload } = useContext(AuthContext);
   const [value, loading, error] = useCollection(
-    query(collection(db, 'hangout'), where("private", "==", false), where("event", "==", String(slug))),
+    query(collection(db, 'hangout'), where("host", "==", String(user?.uid)), where("event", "==", String(slug))),
     {
       snapshotListenOptions: { includeMetadataChanges: true },
     }
   );
 
-  console.log(value);
+  console.log();
   useEffect(() => {
     if (slug) {
       axios
@@ -27,7 +32,7 @@ function EventPage() {
           slug
         )
         .then((response) => {
-          console.log(response.data.records[0]);
+          // console.log(response.data.records[0]);
           setData(response.data.records[0]);
         })
         .catch((error) => console.log(error));
@@ -40,14 +45,56 @@ function EventPage() {
     //https://public.opendatasoft.com/api/records/1.0/search/?dataset=evenements-publics-openagenda&q=&rows=12&facet=keywords_fr&facet=updatedat&facet=firstdate_end&facet=lastdate_begin&facet=lastdate_end&facet=location_city&facet=location_department&facet=location_region&facet=location_countrycode&facet=slug&refine.slug=rencontre-forum-urbain-9&geofilter.distance=+44.84062540000001%2C+-0.5733277%2C3000
   }, [slug]);
 
-  console.log(data)
+  const createHangout = () => {
+    axios.post("/api/hangout", { private: hangout, host: user.uid, event: slug })
+      .then((res) => {
+        // console.log(res.data);
+      })
+  }
+
+  // console.log(data)
 
   if (data) {
     return (
       <div className={styles.container}>
+        {
+          show &&
+          <>
+            <div className="modal" />
+            <Card css={{ position: "fixed", mw: "330px", zIndex: 9999, alignSelf: "center" }}>
+              <Card.Body css={{ py: "$10" }}>
+                <h5>Create a hangout.</h5>
+                <div>
+                  <span style={{ paddingRight: 8 }}>Private</span>
+                  <Switch
+                    size="xs"
+                    css={{ verticalAlign: "top" }}
+                    onChange={(e) => {
+                      setHangout(Boolean(e.target.checked));
+                    }}
+                  />
+                </div>
+
+
+              </Card.Body>
+              <Card.Divider />
+              <Card.Footer css={{ display: "flex", justifyContent: "space-between" }}>
+                <Button auto flat color="error" onPress={() => setShow(false)}>
+                  Close
+                </Button>
+                <Button onPress={createHangout}>
+                  Create
+                </Button>
+              </Card.Footer>
+            </Card>
+          </>
+
+        }
+
         <div className={styles.banner}>
           <div className={styles.imageContainer}>
             <Image
+              priority
               src={data.fields.image}
               alt={data.fields.description_fr}
               width="0"
@@ -77,16 +124,24 @@ function EventPage() {
               <p>{data.fields.location_name}</p>
             </span>
             <div>
-              <button className={styles.button}>
-                Organiser une sortie
-              </button>
+              {value?.docs.length === 0 ?
+                <button type="button" onClick={() => {
+                  setShow(true)
+                  window.scrollTo(0, 0);
+                }} className={styles.button}>
+                  Organize a hangout
+                </button>
+                :
+                <button disabled className={`${styles["button"]} ${styles["button-disabled"]}`}>
+                  Hangout already created
+                </button>
+              }
+
             </div>
           </div>
         </div>
-        <p className={styles.description}>
-          {data.fields.longdescription_fr.replace(/(<([^>]+)>)/gi, "")}
-        </p>
-      </div>
+        <div className={styles.description} dangerouslySetInnerHTML={{ __html: data.fields.longdescription_fr }} />
+      </div >
     );
   }
 }

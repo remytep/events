@@ -1,0 +1,21 @@
+.event-grid {
+    display: grid;
+    grid-template-columns: 1fr
+}
+
+.member-container {
+    width: fit-content;
+}
+
+.member-pic {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: contain;
+}
+
+@media screen and (min-width: 728px) {
+    .event-grid {
+        grid-template-columns: 1fr
+    }
+}

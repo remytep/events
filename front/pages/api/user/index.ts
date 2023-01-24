@@ -10,6 +10,10 @@ export default function handler(
     res: NextApiResponse
 ) {
 
+    function getUserByUid() {
+
+    }
+
     function createUser() {
         const docRef = doc(db, 'user', req.body.id);
 

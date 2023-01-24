@@ -94,7 +94,7 @@ function Profile() {
         }
 
         updateProfile({ displayName: userInfos?.handle, photoURL: value })
-        axios.put("/api/user", Object.assign(userInfos, { id: user.uid, photoURL: value }))
+        axios.put("/api/user", Object.assign(userInfos, { id: user.uid, photoURL: user.photoURL }))
             .then((res) => {
                 console.log(res)
             })
@@ -102,7 +102,7 @@ function Profile() {
         setDefaultValues(userInfos)
 
     }
-    // console.log(user)
+    console.log(user)
     if (user)
         return (
             <>
@@ -117,6 +117,7 @@ function Profile() {
 
                         <label htmlFor="upload">
                             <Image
+                                css={{ borderRadius: "50%", cursor: "pointer" }}
                                 showSkeleton
                                 width={150}
                                 height={150}
@@ -168,6 +169,8 @@ function Profile() {
                     />
 
                     <Textarea
+
+                        maxRows={3}
                         label="Presentation"
                         placeholder="Presentation"
                         initialValue={Object(user).presentation?.toString()}

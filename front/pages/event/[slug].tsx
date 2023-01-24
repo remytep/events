@@ -17,13 +17,13 @@ function EventPage() {
   const { slug } = router.query;
   const { user, reload } = useContext(AuthContext);
   const [value, loading, error] = useCollection(
-    query(collection(db, 'hangout'), where("private", "==", false), where("event", "==", String(slug))),
+    query(collection(db, 'hangout'), where("host", "==", String(user?.uid)), where("event", "==", String(slug))),
     {
       snapshotListenOptions: { includeMetadataChanges: true },
     }
   );
 
-  console.log(value);
+  console.log();
   useEffect(() => {
     if (slug) {
       axios
@@ -32,7 +32,7 @@ function EventPage() {
           slug
         )
         .then((response) => {
-          console.log(response.data.records[0]);
+          // console.log(response.data.records[0]);
           setData(response.data.records[0]);
         })
         .catch((error) => console.log(error));
@@ -48,11 +48,11 @@ function EventPage() {
   const createHangout = () => {
     axios.post("/api/hangout", { private: hangout, host: user.uid, event: slug })
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
       })
   }
 
-  console.log(data)
+  // console.log(data)
 
   if (data) {
     return (
@@ -124,12 +124,19 @@ function EventPage() {
               <p>{data.fields.location_name}</p>
             </span>
             <div>
-              <button onClick={() => {
-                setShow(true)
-                window.scrollTo(0, 0);
-              }} className={styles.button}>
-                Organiser une sortie
-              </button>
+              {value?.docs.length === 0 ?
+                <button type="button" onClick={() => {
+                  setShow(true)
+                  window.scrollTo(0, 0);
+                }} className={styles.button}>
+                  Organize a hangout
+                </button>
+                :
+                <button disabled className={`${styles["button"]} ${styles["button-disabled"]}`}>
+                  Hangout already created
+                </button>
+              }
+
             </div>
           </div>
         </div>

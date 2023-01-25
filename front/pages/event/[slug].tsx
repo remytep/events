@@ -52,18 +52,16 @@ function EventPage() {
       })
   }
 
-  // console.log(data)
-
   if (data) {
     return (
       <div className={styles.container}>
         {
           show &&
           <>
-            <div className="modal" />
-            <Card css={{ position: "fixed", mw: "330px", zIndex: 9999, alignSelf: "center" }}>
+            <div className="modal-bg" />
+            <Card className="modal">
               <Card.Body css={{ py: "$10" }}>
-                <h5>Create a hangout.</h5>
+                <h5>Create a hangout</h5>
                 <div>
                   <span style={{ paddingRight: 8 }}>Private</span>
                   <Switch
@@ -88,7 +86,6 @@ function EventPage() {
               </Card.Footer>
             </Card>
           </>
-
         }
 
         <div className={styles.banner}>
@@ -127,13 +124,14 @@ function EventPage() {
               {value?.docs.length === 0 ?
                 <button type="button" onClick={() => {
                   setShow(true)
-                  window.scrollTo(0, 0);
                 }} className={styles.button}>
                   Organize a hangout
                 </button>
                 :
-                <button disabled className={`${styles["button"]} ${styles["button-disabled"]}`}>
-                  Hangout already created
+                <button type="button" onClick={() => {
+                  router.push("/hangout/" + value?.docs[0].id)
+                }} className={styles.button}>
+                  Go to your hangout
                 </button>
               }
 

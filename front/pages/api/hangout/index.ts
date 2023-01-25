@@ -15,7 +15,7 @@ export default function handler(
             setDoc(doc(collection(db, "hangout")), {
                 event: req.body.event,
                 host: req.body.host,
-                participants: [],
+                participants: [req.body.host],
                 private: req.body.private
             });
             return res.status(200).send("created");

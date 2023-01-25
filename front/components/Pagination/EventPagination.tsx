@@ -12,6 +12,7 @@ function EventPagination({ results, rows, page, setPage, start, setStart }) {
   return (
     <div className={styles.paginationContainer}>
       <Pagination
+        color="primary"
         variant="outlined"
         shape="rounded"
         count={pageCount}

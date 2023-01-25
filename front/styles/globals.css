@@ -133,6 +133,11 @@ a {
   width: 24px;
 }
 
+.MuiPagination-ul li button {
+  color: white;
+  border-color: white;
+}
+
 .modal {
   background-color: white;
   position: fixed;

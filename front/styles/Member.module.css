@@ -1,4 +1,5 @@
 .event-grid {
+    margin-top: 4vh;
     display: grid;
     grid-template-columns: 1fr
 }

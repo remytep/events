@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
-import { Loading, User as UserNext } from "@nextui-org/react";
+import { Button, Loading, User as UserNext } from "@nextui-org/react";
 import axios from "axios";
 import { AuthContext } from "../../context/AuthContext";
 import { collection, query, where, getDoc } from "firebase/firestore";
@@ -35,6 +35,8 @@ function User() {
         }
     }, [handle])
     useEffect(() => {
+        setHosts([]);
+        setEvents([]);
         value?.docs.map((doc) => {
             let data = doc.data();
             axios.get('/api/host/' + data["host"])
@@ -69,21 +71,34 @@ function User() {
                             className="text-light"
                         >
                             <div className={styles["member-container"]}>
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        flexDirection: "column",
-                                        justifyContent: "space-between",
-                                    }}
-                                >
+                                <div>
                                     <img
                                         className={styles["member-pic"]}
                                         src={userInfos.doc.photoURL?.toString()}
                                         referrerPolicy="no-referrer"
                                     />
-                                    <h2 style={{ margin: "auto 0", height: "min-content" }}>
-                                        @{userInfos.doc.handle?.toString()}
-                                    </h2>
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                        }}
+                                    >
+                                        <h2 style={{ margin: "auto 0", height: "min-content", paddingRight: "3vw" }}>
+                                            @{userInfos.doc.handle?.toString()}
+                                        </h2>
+                                        {userInfos.id === user.uid &&
+                                            <Button
+                                                size="xs"
+                                                css={{ m: "auto" }}
+                                                auto
+                                                onPress={() => router.push("/profile")}
+                                            >
+                                                Edit
+                                            </Button>
+                                        }
+
+                                    </div>
+
                                 </div>
                                 <p>{userInfos.doc.presentation?.toString()}</p>
                             </div>
@@ -98,7 +113,7 @@ function User() {
                             {events?.map((event, i) => {
                                 console.log(value?.docs[i]?.data())
                                 let data = value?.docs[i]?.data();
-                                if (!data?.private || (data?.private && data?.host === user.uid))
+                                if (!data?.private || (data?.private && data?.participants.includes(user?.uid) && user?.uid === userInfos?.id))
                                     return (
                                         <Link key={i} href={`/hangout/${value?.docs[i]?.id}`}>
                                             <Card css={{ my: "$5", maxWidth: "502px" }}>
@@ -117,12 +132,11 @@ function User() {
                                                             ? Object(event).fields.title_fr
                                                             : Object(event).fields.originagenda_title}
                                                     </h4>
-                                                    {(data?.participants.includes(user?.uid) && data?.host !== user.uid) &&
+                                                    {(data?.participants.includes(user?.uid) && ![data?.host, userInfos.id].includes(user?.uid)) &&
                                                         <p>You're already participating.</p>
                                                     }
                                                     <p>
-                                                        {(value?.docs[i]?.data().participants.length | 0)}{" "}
-                                                        participant(s)
+                                                        {(value?.docs[i]?.data().participants.length | 0)} participant(s)
                                                     </p>
                                                 </Card.Body>
                                             </Card>
@@ -135,7 +149,8 @@ function User() {
                     <h2 style={{ margin: "0 auto" }} className="text-light">
                         User not found :(
                     </h2>
-                )}
+                )
+                }
             </>
         );
     else return <Loading size="xl" css={{ margin: "auto auto" }} />;

@@ -12,6 +12,7 @@ const poppins = Poppins({ weight: "400", subsets: ["latin"] });
 function Header() {
   const [drawerMenuOpen, setDrawerMenuOpen] = useState(false);
   const [currentUser] = useAuthState(auth);
+
   return (
     <>
       <header className={styles.header}>
@@ -47,8 +48,8 @@ function Header() {
           <nav className={`${styles.navbarDesktop}`}>
             {currentUser ? (
               <>
-                <Link href="/hangouts">Hangouts</Link>
-                <Link href="/profile">Profile</Link>
+                <Link href="/hangout">Hangouts</Link>
+                <Link href={`/member/${currentUser?.displayName}`} >Profile</Link>
               </>
             ) : (
               <>
@@ -132,10 +133,10 @@ function Header() {
                   <nav className={styles.drawerNav}>
                     {currentUser ? (
                       <>
-                        <Link href="/hangouts" className={styles.drawerNavLink}>
+                        <Link href="/hangout" className={styles.drawerNavLink}>
                           Hangouts
                         </Link>
-                        <Link href="/profile" className={styles.drawerNavLink}>
+                        <Link href={`/member/${currentUser?.displayName}`} className={styles.drawerNavLink}>
                           Profile
                         </Link>
                       </>

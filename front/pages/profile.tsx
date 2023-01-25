@@ -106,10 +106,6 @@ function Profile() {
     if (user)
         return (
             <>
-                {/* {uploadError && <strong>Error: {uploadError.message}</strong>}
-                {uploading && <span>Uploading file...</span>}
-                {snapshot && <span>Snapshot: {JSON.stringify(snapshot)}</span>}
-                {selectedFile && <span>Selected file: {selectedFile.name}</span>} */}
                 <form className={styles["profile-form"]} onSubmit={handleSubmit(update)}>
                     <span className="text-light text-center">{user.displayName}'s Profile</span>
                     {loading ?
@@ -125,12 +121,6 @@ function Profile() {
                     }
 
                     <SignOutButton />
-
-                    {/* {!loading && value && (
-                    <React.Fragment>
-                        <span>Download URL: {value}</span>
-                    </React.Fragment>
-                )} */}
 
                     <input
                         id="upload"
@@ -166,7 +156,6 @@ function Profile() {
                     />
 
                     <Textarea
-
                         maxRows={3}
                         label="Presentation"
                         placeholder="Presentation"

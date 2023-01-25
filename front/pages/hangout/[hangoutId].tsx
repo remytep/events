@@ -16,6 +16,7 @@ import { FaPaperPlane } from "react-icons/fa";
 import { IconButton } from "../../components/Icons/IconButton"
 import { Autocomplete, TextField } from "@mui/material";
 const libraries = ["places"];
+
 function Hangout() {
   const router = useRouter();
   const messagesEndRef = useRef(null)
@@ -169,6 +170,7 @@ function Hangout() {
       }
       <Link href={`/event/${Object(data)?.event}`}>
         {/*         <Image src={eventData?.fields.thumbnail} alt={eventData?.fields.description_fr} /> */}
+        <span className="text-light">{data?.private ? "Private" : "Public"} hangout</span>
         <h1 className={styles.title}>{Object(eventData)?.fields?.title_fr}</h1>
       </Link>
       <GoogleMap
@@ -210,15 +212,23 @@ function Hangout() {
               Add member
             </Button>
           }
-          {participants?.includes(user?.uid)
-            ?
-            <Button color="error" css={{ m: 4 }} size="sm" onPress={() => joinHangout(true)}>
-              Leave hangout
-            </Button>
+          {!data?.private ?
+            participants?.includes(user?.uid)
+              ?
+              (<Button color="error" css={{ m: 4 }} size="sm" onPress={() => joinHangout(true)}>
+                Leave hangout
+              </Button>
+              )
+              :
+              (<Button css={{ m: 4 }} size="sm" onPress={() => joinHangout(false)}>
+                Join hangout
+              </Button>
+              )
             :
-            <Button css={{ m: 4 }} size="sm" onPress={() => joinHangout(false)}>
-              Join hangout
+            (<Button disabled css={{ m: 4 }} size="sm">
+              Need invite
             </Button>
+            )
           }
         </div>
 
@@ -240,7 +250,7 @@ function Hangout() {
         <div style={{ width: "100%" }}>
           <div className={styles.hangoutChat} ref={messagesEndRef}>
             {participants?.includes(user?.uid) ?
-              messagesValue?.docs.sort((a, b) => a.data().createdAt - b.data().createdAt)
+              messagesValue?.docs.sort((a, b) => b.data().createdAt - a.data().createdAt)
                 .map((doc, i) => {
                   let backgroundColor = "#5e617e";
                   let marginLeft = "0";

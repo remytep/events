@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useCollection } from "react-firebase-hooks/firestore";
 import { db } from "../../config/firebase";
 import axios from "axios";
+import HangoutCard from "../../components/hangouts/HangoutCard";
 
 function Hangout() {
 
@@ -37,10 +38,23 @@ function Hangout() {
         }, 1500);
     }, [value])
 
-    console.log(value)
-
     return (
-        <p>Hello</p>
+        <div className="text-light" style={{ margin: "0 auto" }}>
+            <h1>Events</h1>
+            <div className="grid">
+
+                {events.map((event, i) => {
+                    let data = value?.docs[i]?.data();
+                    let id = value?.docs[i]?.id;
+                    return (
+                        <HangoutCard key={i} id={id} i={i} hosts={hosts} data={data} event={event} />
+                    )
+                })}
+            </div>
+        </div>
+
+
+
     )
 }
 export default Hangout;

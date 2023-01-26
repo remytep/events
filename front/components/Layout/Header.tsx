@@ -6,13 +6,14 @@ import { auth } from "../../config/firebase";
 import { Poppins } from "@next/font/google";
 import { Transition, Dialog } from "@headlessui/react";
 import styles from "../../styles/Header.module.css";
+import { Router, useRouter } from "next/router";
 
 const poppins = Poppins({ weight: "400", subsets: ["latin"] });
 
 function Header() {
   const [drawerMenuOpen, setDrawerMenuOpen] = useState(false);
   const [currentUser] = useAuthState(auth);
-
+  const router = useRouter();
   return (
     <>
       <header className={styles.header}>
@@ -49,7 +50,9 @@ function Header() {
             {currentUser ? (
               <>
                 <Link href="/hangout">Hangouts</Link>
-                <Link href={`/member/${currentUser?.displayName}`} >Profile</Link>
+                <a className={styles.drawerNavLink} onClick={() => { window.location.pathname = `/member/${currentUser?.displayName}` }}>
+                  Profile
+                </a>
               </>
             ) : (
               <>
@@ -136,9 +139,9 @@ function Header() {
                         <Link href="/hangout" className={styles.drawerNavLink}>
                           Hangouts
                         </Link>
-                        <Link href={`/member/${currentUser?.displayName}`} className={styles.drawerNavLink}>
+                        <a className={styles.drawerNavLink} onClick={() => { window.location.pathname = `/member/${currentUser?.displayName}` }}>
                           Profile
-                        </Link>
+                        </a>
                       </>
                     ) : (
                       <>

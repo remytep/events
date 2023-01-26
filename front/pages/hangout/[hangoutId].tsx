@@ -118,6 +118,7 @@ function Hangout() {
 
   }
 
+  //select options for invite members 
   let choicesUser = Array();
   usersValue?.forEach((obj) => {
     let data = obj.data();
@@ -127,8 +128,8 @@ function Hangout() {
         label: data.handle
       });
     }
-
   })
+
 
   if (!isLoaded) return <div>Loading...</div>;
   return (
@@ -212,7 +213,7 @@ function Hangout() {
               Add member
             </Button>
           }
-          {!data?.private ?
+          {(!data?.private || participants?.includes(user?.uid)) ?
             participants?.includes(user?.uid)
               ?
               (<Button color="error" css={{ m: 4 }} size="sm" onPress={() => joinHangout(true)}>
@@ -260,7 +261,9 @@ function Hangout() {
                   }
                   return (
                     <Card key={i} css={{ m: 5, p: 15, backgroundColor, minWidth: "150px", w: "fit-content", marginLeft }}>
-                      <UserCard key={doc.data().sender} id={doc.data().sender} host={false} />
+                      <div style={{ marginLeft: marginLeft }}>
+                        <UserCard key={doc.data().sender} id={doc.data().sender} host={false} />
+                      </div>
                       <span style={{ fontSize: "12px" }} className="text-light">{moment(new Date(doc.data().createdAt)).fromNow()}</span>
                       <p className="text-light">{doc.data().content}</p>
                     </Card>

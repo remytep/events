@@ -119,7 +119,7 @@ a {
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(1, 1fr);
   grid-gap: 50px;
 }
 
@@ -172,4 +172,12 @@ body:has(.modal) {
 
 .nextui-user-name {
   color: white;
+}
+
+@media screen and (min-width: 720px) {
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 50px;
+  }
 }

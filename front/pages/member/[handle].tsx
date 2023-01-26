@@ -10,6 +10,7 @@ import { Card } from "@nextui-org/react";
 import Link from "next/link";
 import Image from "next/image";
 import styles from "../../styles/Member.module.css";
+import HangoutCard from "../../components/hangouts/HangoutCard";
 
 function User() {
     const router = useRouter()
@@ -113,34 +114,10 @@ function User() {
                             {events?.map((event, i) => {
                                 console.log(value?.docs[i]?.data())
                                 let data = value?.docs[i]?.data();
+                                let id = value?.docs[i]?.id;
                                 if (!data?.private || (data?.private && data?.participants.includes(user?.uid) && user?.uid === userInfos?.id))
                                     return (
-                                        <Link key={i} href={`/hangout/${value?.docs[i]?.id}`}>
-                                            <Card css={{ my: "$5", maxWidth: "502px" }}>
-                                                <Card.Body>
-                                                    <img
-                                                        style={{ width: "100%", objectFit: "cover" }}
-                                                        height={180}
-                                                        src={Object(event).fields.image}
-                                                        alt="Default Image"
-                                                    />
-                                                    <span style={{ fontSize: "11px" }}>{data?.private ? "Private hangout" : "Public hangout"}</span>
-                                                    <span>Hosted by {hosts[i]?.doc?.handle}</span>
-                                                    <h4 style={{ width: "260px" }}>
-                                                        Event :{" "}
-                                                        {Object(event).fields.title_fr
-                                                            ? Object(event).fields.title_fr
-                                                            : Object(event).fields.originagenda_title}
-                                                    </h4>
-                                                    {(data?.participants.includes(user?.uid) && ![data?.host, userInfos.id].includes(user?.uid)) &&
-                                                        <p>You're already participating.</p>
-                                                    }
-                                                    <p>
-                                                        {(value?.docs[i]?.data().participants.length | 0)} participant(s)
-                                                    </p>
-                                                </Card.Body>
-                                            </Card>
-                                        </Link>
+                                        <HangoutCard key={i} id={id} i={i} hosts={hosts} userInfos={userInfos} data={data} event={event} />
                                     );
                             })}
                         </div>

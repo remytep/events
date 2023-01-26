@@ -50,6 +50,7 @@ function EventPage() {
       .then((res) => {
         // console.log(res.data);
       })
+    setShow(false);
   }
 
   if (data) {

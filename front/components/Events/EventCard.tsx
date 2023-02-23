@@ -4,7 +4,7 @@ import Link from "next/link";
 import styles from "../../styles/EventCard.module.css";
 
 function EventCard({ data }) {
-  console.log(data);
+  //console.log(data);
   return (
     <div className={styles.eventCard}>
       <hr />

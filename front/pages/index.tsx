@@ -26,29 +26,31 @@ export default function Home() {
   const [start, setStart] = useState(rows * page);
 
   useEffect(() => {
-    let apiUrl =
-      "https://public.opendatasoft.com/api/records/1.0/search/?dataset=evenements-publics-openagenda&q=&rows=" +
-      rows +
-      "&start=" +
-      start;
-    let keywords = "";
-    let geodistance = "";
-    if (tags.length > 0) {
-      tags.forEach((tag) => {
-        keywords += "&refine.keywords_fr=" + tag;
-      });
+    if (location.lat && location.lng) {
+      let apiUrl =
+        "https://public.opendatasoft.com/api/records/1.0/search/?dataset=evenements-publics-openagenda&q=&rows=" +
+        rows +
+        "&start=" +
+        start;
+      let keywords = "";
+      let geodistance = "";
+      if (tags.length > 0) {
+        tags.forEach((tag) => {
+          keywords += "&refine.keywords_fr=" + tag;
+        });
+      }
+      if (JSON.stringify(location) !== "{}") {
+        geodistance +=
+          "&geofilter.distance=+" +
+          location.lat +
+          "%2C+" +
+          location.lng +
+          "%2C" +
+          distance;
+      }
+      //console.log(apiUrl + keywords + geodistance);
+      setApiUrl(apiUrl + keywords + geodistance);
     }
-    if (JSON.stringify(location) !== "{}") {
-      geodistance +=
-        "&geofilter.distance=+" +
-        location.lat +
-        "%2C+" +
-        location.lng +
-        "%2C" +
-        distance;
-    }
-    console.log(apiUrl + keywords + geodistance);
-    setApiUrl(apiUrl + keywords + geodistance);
   }, [distance, tags, location, rows, page, start]);
   //axios
   useEffect(() => {
@@ -56,8 +58,16 @@ export default function Home() {
       axios
         .get(apiUrl)
         .then((response) => {
-          console.log(response.data);
-          setResults(response.data);
+          //console.log(response.data);
+          let res = response.data;
+          res.records.sort(function (a: object, b: object) {
+            return (
+              new Date(b.fields.firstdate_begin) -
+              new Date(a.fields.firstdate_begin)
+            );
+          });
+          console.log(res);
+          setResults(res);
         })
         .catch((error) => console.log(error));
     }

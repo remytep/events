@@ -51,7 +51,7 @@ function Filters({
             options={[]}
             value={tags}
             onChange={(event, newValue) => {
-              console.log(newValue);
+              //console.log(newValue);
               setTags(newValue);
             }}
             filterSelectedOptions

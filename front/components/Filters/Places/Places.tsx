@@ -119,7 +119,7 @@ function Map({
               sx={{ ".MuiOutlinedInput-root": { border: 0 } }}
               onChange={(e) => {
                 setDistance(e.target.value);
-                console.log(e.target.value);
+                //console.log(e.target.value);
               }}
             >
               {distanceArray.map((obj) => (
@@ -170,10 +170,10 @@ const PlacesAutocomplete = ({
     location["lng"] = lng;
     setCenter({ lat, lng });
     setLocation(location);
-    console.log(location);
+    //console.log(location);
   };
   const handleGeolocate = async () => {
-    console.log(isGeolocationEnabled);
+    //console.log(isGeolocationEnabled);
     if (isGeolocationEnabled) {
       setGeolocated(true);
       await getPosition();

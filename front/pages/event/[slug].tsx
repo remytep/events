@@ -35,7 +35,7 @@ function EventPage() {
             slug
         )
         .then((response) => {
-          console.log(response.data.records[0]);
+          //console.log(response.data.records[0]);
           /* let data = response.data.records[0];
           data.sort(function (a, b) {
             // Turn your strings into dates, and then subtract them

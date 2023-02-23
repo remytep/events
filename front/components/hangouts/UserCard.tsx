@@ -14,7 +14,7 @@ function UserCard({ id, host }) {
           setInterval(() => {
             setLoading(false);
           }, 1500);
-          console.log(res.data.doc);
+          //console.log(res.data.doc);
           setUserInfos(res.data.doc);
         })
         .catch((error) => console.log(error));

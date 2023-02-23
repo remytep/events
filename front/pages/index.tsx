@@ -66,7 +66,7 @@ export default function Home() {
               new Date(a.fields.firstdate_begin)
             );
           });
-          console.log(res);
+          //console.log(res);
           setResults(res);
         })
         .catch((error) => console.log(error));

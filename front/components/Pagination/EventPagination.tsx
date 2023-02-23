@@ -18,7 +18,7 @@ function EventPagination({ results, rows, page, setPage, start, setStart }) {
         count={pageCount}
         page={page}
         onChange={(e, page) => {
-          console.log(page);
+          //console.log(page);
           setPage(page);
           setStart(page * rows);
         }}
